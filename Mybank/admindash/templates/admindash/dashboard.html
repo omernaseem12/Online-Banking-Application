@@ -676,7 +676,7 @@ canvas {
     gap: 0.5rem;
     background: var(--primary-color);
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.5rem;
     border-radius: 0.5rem;
     text-decoration: none;
     transition: all 0.3s ease;
@@ -1561,8 +1561,8 @@ canvas {
                                     <span class="transaction-date">{{ transaction.date }}</span>
                                 </div>
                             </div>
-                            <a href="{% url 'transaction_detail' transaction.trans_id %}" class="transaction-action">
-                                <i class="material-icons">chevron_right</i>
+                            <a href="{% url 'transaction_detail' transaction.trans_id %}"  class="transaction-action">
+                                <i class="material-icons" style="text-decoration: none; color:blue;" >chevron_right</i>
                             </a>
                         </div>
                         {% endfor %}
@@ -1575,63 +1575,47 @@ canvas {
             <!-- User Activity -->
             <div class="section activity-section">
                 <div class="section-header">
-                    <h2>User Activity</h2>
+                    <h2>Registered Users</h2>
+                    <div class="header-actions">
+                    <a href="{% url 'issue_card' %}" class="primary-btn">
+                            <i class="material-icons" >add_card</i>
+                            Add New User
+                        </a>
                     <a href="{% url 'user_management' %}" class="view-all-btn">Manage Users</a>
+                    </div>
                 </div>
                 <div class="activity-list">
-                    {% if user_activities %}
-                        {% for activity in user_activities %}
-                        <div class="activity-item">
-                            <div class="activity-icon">
-                                {% if activity.type == 'login' %}
-                                    <i class="material-icons">login</i>
-                                {% elif activity.type == 'transfer' %}
-                                    <i class="material-icons">sync_alt</i>
-                                {% elif activity.type == 'profile_update' %}
-                                    <i class="material-icons">edit</i>
-                                {% elif activity.type == 'password_change' %}
-                                    <i class="material-icons">lock</i>
+                    <!-- Dummy User 1 -->
+                    {% for user in recent_users %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="material-icons" style="color: #10b981;">person</i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="activity-user">{{user.first_name}} {{user.last_name}}</span>
+                            </div>
+                            <div class="activity-meta">
+                                <span class="user-email">{{user.email}}</span>
+                                {% if user.status == 'Active' %}
+                                <span class="status-badge success">Active</span>
+                                {% elif user.status == 'Block' %}
+                                <span class="status-badge error">Blocked</span>
                                 {% else %}
-                                    <i class="material-icons">circle</i>
-                                {% endif %}
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-header">
-                                    <span class="activity-user">{{ activity.user }}</span>
-                                    <span class="activity-time">{{ activity.timestamp }}</span>
-                                </div>
-                                <div class="activity-description">{{ activity.description }}</div>
-                                {% if activity.location %}
-                                <div class="activity-meta">
-                                    <i class="material-icons">location_on</i>
-                                    <span>{{ activity.location }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                            <div class="activity-status">
-                                {% if activity.status == 'success' %}
-                                    <span class="status-badge success">Success</span>
-                                {% elif activity.status == 'warning' %}
-                                    <span class="status-badge warning">Warning</span>
-                                {% elif activity.status == 'error' %}
-                                    <span class="status-badge error">Failed</span>
+                                <span class="status-badge warning">Inactive</span>
                                 {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="no-data">
-                            <i class="material-icons">history</i>
-                            <p>No recent activity</p>
+                        <div class="user-actions">
+                            <a href="{% url 'edit_user' user.user_id %}" class="action-btn">
+                                <i class="material-icons">visibility</i>
+                            </a>
                         </div>
-                    {% endif %}
+                    </div>
+                    {% endfor %}
+
                 </div>
-                <div class="quick-actions">
-                    <a href="{% url 'add_user' %}" class="action-btn blue">
-                        <i class="material-icons">person_add</i>
-                        Add New User
-                    </a>
-                </div>
+
             </div>
         </div>
 
@@ -1734,7 +1718,7 @@ canvas {
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <a href="#" class="action-btn">
+                                <a href="{% url 'view_card' card.id %}" class="action-btn">
                                     <i class="material-icons">visibility</i>
                                     View
                                 </a>
