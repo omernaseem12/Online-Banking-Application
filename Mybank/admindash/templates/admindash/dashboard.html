@@ -57,246 +57,538 @@
 
     <!-- Main Content Grid -->
     <div class="main-grid">
-        <!-- Recent Transactions -->
-        <div class="section transactions-section">
-            <div class="section-header">
-                <h2>Recent Transactions</h2>
-                <a href="{% url 'transactions' %}" class="view-all-btn">View All</a>
-            </div>
-            <div class="transaction-list">
-                {% if recent_transactions %}
-                    {% for transaction in recent_transactions %}
-                    <div class="transaction-item">
-                        <div class="transaction-icon">
-                            {% if transaction.type == 'Deposit' %}
-                            <i class="material-icons success">arrow_downward</i>
-                            {% elif transaction.type == 'Withdrawal' %}
-                            <i class="material-icons warning">arrow_upward</i>
-                            {% else %}
-                            <i class="material-icons">swap_horiz</i>
-                            {% endif %}
-                        </div>
-                        <div class="transaction-info">
-                            <div class="transaction-main">
-                                <span class="transaction-type">{{ transaction.type }}</span>
-                                <span class="transaction-amount">${{ transaction.amount }}</span>
+        <!-- Left Section -->
+        <div class="left-section">
+            <!-- Recent Transactions -->
+            <div class="section transactions-section">
+                <div class="section-header">
+                    <h2>Recent Transactions</h2>
+                    <a href="{% url 'transactions' %}" class="view-all-btn">View All</a>
+                </div>
+                <div class="transaction-list">
+                    {% if recent_transactions %}
+                        {% for transaction in recent_transactions %}
+                        <div class="transaction-item">
+                            <div class="transaction-icon">
+                                {% if transaction.type == 'Deposit' %}
+                                <i class="material-icons success">arrow_downward</i>
+                                {% elif transaction.type == 'Withdrawal' %}
+                                <i class="material-icons warning">arrow_upward</i>
+                                {% else %}
+                                <i class="material-icons">swap_horiz</i>
+                                {% endif %}
                             </div>
-                            <div class="transaction-details">
-                                <span class="transaction-id">{{ transaction.trans_id }}</span>
-                                <span class="transaction-date">{{ transaction.date }}</span>
+                            <div class="transaction-info">
+                                <div class="transaction-main">
+                                    <span class="transaction-type">{{ transaction.type }}</span>
+                                    <span class="transaction-amount">${{ transaction.amount }}</span>
+                                </div>
+                                <div class="transaction-details">
+                                    <span class="transaction-id">{{ transaction.trans_id }}</span>
+                                    <span class="transaction-date">{{ transaction.date }}</span>
+                                </div>
                             </div>
+                            <a href="{% url 'transaction_details' transaction.trans_id %}" class="transaction-action">
+                                <i class="material-icons">chevron_right</i>
+                            </a>
                         </div>
-                        <a href="{% url 'transaction_details' transaction.trans_id %}" class="transaction-action">
-                            <i class="material-icons">chevron_right</i>
-                        </a>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="no-data">No recent transactions</div>
-                {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-data">No recent transactions</div>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        <!-- User Activity -->
-        <div class="section activity-section">
-            <div class="section-header">
-                <h2>User Activity</h2>
-                <a href="{% url 'user_management' %}" class="view-all-btn">Manage Users</a>
-            </div>
-            <div class="activity-chart">
-                <canvas id="userActivityChart"></canvas>
-            </div>
-            <div class="quick-actions">
-                <a href="{% url 'add_user' %}" class="action-btn blue">
-                    <i class="material-icons">person_add</i>
-                    Add New User
-                </a>
-            </div>
-        </div>
-
-        <!-- Card Management -->
-        <div class="section cards-section">
-            <div class="section-header">
-                <h2>Card Management</h2>
-                <div class="header-actions">
-                    <a href="{% url 'issue_card' %}" class="primary-btn">
-                        <i class="material-icons">add_card</i>
-                        Issue New Card
+            <!-- User Activity -->
+            <div class="section activity-section">
+                <div class="section-header">
+                    <h2>User Activity</h2>
+                    <a href="{% url 'user_management' %}" class="view-all-btn">Manage Users</a>
+                </div>
+                <div class="activity-chart">
+                    <canvas id="userActivityChart"></canvas>
+                </div>
+                <div class="quick-actions">
+                    <a href="{% url 'add_user' %}" class="action-btn blue">
+                        <i class="material-icons">person_add</i>
+                        Add New User
                     </a>
-                    <a href="{% url 'card_management' %}" class="view-all-btn">View All</a>
-                </div>
-            </div>
-
-            <div class="card-overview">
-                <div class="overview-row">
-                    <div class="overview-item active">
-                        <div class="overview-icon">
-                            <i class="material-icons">credit_score</i>
-                            <div class="status-indicator"></div>
-                        </div>
-                        <div class="overview-details">
-                            <span class="overview-label">Active Cards</span>
-                            <span class="overview-value">{{ active_cards|default:"0" }}</span>
-                        </div>
-                    </div>
-                    <div class="overview-item pending">
-                        <div class="overview-icon">
-                            <i class="material-icons">pending</i>
-                            <div class="status-indicator"></div>
-                        </div>
-                        <div class="overview-details">
-                            <span class="overview-label">Pending Cards</span>
-                            <span class="overview-value">{{ pending_cards|default:"0" }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="overview-row centered">
-                    <div class="overview-item blocked">
-                        <div class="overview-icon">
-                            <i class="material-icons">block</i>
-                            <div class="status-indicator"></div>
-                        </div>
-                        <div class="overview-details">
-                            <span class="overview-label">Blocked Cards</span>
-                            <span class="overview-value">{{ blocked_cards|default:"0" }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="recent-cards">
-                <h3>Recently Issued Cards</h3>
-                <div class="cards-list">
-                    <div class="card-item">
-                        <div class="card-preview">
-                            <div class="card-type-indicator credit">
-                                Credit
-                            </div>
-                            <div class="card-number">
-                                •••• •••• •••• 4532
-                            </div>
-                            <div class="card-status active">
-                                Active
-                            </div>
-                        </div>
-                        <div class="card-details">
-                            <div class="detail-group">
-                                <span class="detail-label">Account</span>
-                                <span class="detail-value">ACC43544105</span>
-                            </div>
-                            <div class="detail-group">
-                                <span class="detail-label">Issued</span>
-                                <span class="detail-value">2024-03-15</span>
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            <a href="#" class="action-btn warning">
-                                <i class="material-icons">block</i>
-                                Block
-                            </a>
-                            <a href="#" class="action-btn">
-                                <i class="material-icons">visibility</i>
-                                View
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="card-item">
-                        <div class="card-preview">
-                            <div class="card-type-indicator debit">
-                                Debit
-                            </div>
-                            <div class="card-number">
-                                •••• •••• •••• 7891
-                            </div>
-                            <div class="card-status pending">
-                                Pending
-                            </div>
-                        </div>
-                        <div class="card-details">
-                            <div class="detail-group">
-                                <span class="detail-label">Account</span>
-                                <span class="detail-value">ACC32886858</span>
-                            </div>
-                            <div class="detail-group">
-                                <span class="detail-label">Issued</span>
-                                <span class="detail-value">2024-03-14</span>
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            <a href="#" class="action-btn">
-                                <i class="material-icons">visibility</i>
-                                View
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="card-item">
-                        <div class="card-preview">
-                            <div class="card-type-indicator credit">
-                                Credit
-                            </div>
-                            <div class="card-number">
-                                •••• •••• •••• 3214
-                            </div>
-                            <div class="card-status block">
-                                Blocked
-                            </div>
-                        </div>
-                        <div class="card-details">
-                            <div class="detail-group">
-                                <span class="detail-label">Account</span>
-                                <span class="detail-value">ACC98765432</span>
-                            </div>
-                            <div class="detail-group">
-                                <span class="detail-label">Issued</span>
-                                <span class="detail-value">2024-03-13</span>
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            <a href="#" class="action-btn success">
-                                <i class="material-icons">check_circle</i>
-                                Activate
-                            </a>
-                            <a href="#" class="action-btn">
-                                <i class="material-icons">visibility</i>
-                                View
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- System Alerts -->
-        <div class="section alerts-section">
-            <div class="section-header">
-                <h2>System Alerts</h2>
-                <button class="refresh-btn">
-                    <i class="material-icons">refresh</i>
-                </button>
-            </div>
-            <div class="alerts-list">
-                {% if system_alerts %}
-                    {% for alert in system_alerts %}
-                    <div class="alert-item {{ alert.level }}">
-                        <i class="material-icons">{{ alert.icon }}</i>
-                        <div class="alert-content">
-                            <div class="alert-title">{{ alert.title }}</div>
-                            <div class="alert-message">{{ alert.message }}</div>
-                        </div>
-                        <span class="alert-time">{{ alert.time }}</span>
+        <!-- Right Section -->
+        <div class="right-section">
+            <!-- Card Management -->
+            <div class="section cards-section">
+                <div class="section-header">
+                    <h2>Card Management</h2>
+                    <div class="header-actions">
+                        <a href="{% url 'issue_card' %}" class="primary-btn">
+                            <i class="material-icons">add_card</i>
+                            Issue New Card
+                        </a>
+                        <a href="{% url 'card_management' %}" class="view-all-btn">View All</a>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="no-data">No active alerts</div>
-                {% endif %}
+                </div>
+
+                <div class="card-overview">
+                    <div class="overview-row">
+                        <div class="overview-item active">
+                            <div class="overview-icon">
+                                <i class="material-icons">credit_score</i>
+                                <div class="status-indicator"></div>
+                            </div>
+                            <div class="overview-details">
+                                <span class="overview-label">Active Cards</span>
+                                <span class="overview-value">{{ active_cards|default:"0" }}</span>
+                            </div>
+                        </div>
+                        <div class="overview-item pending">
+                            <div class="overview-icon">
+                                <i class="material-icons">pending</i>
+                                <div class="status-indicator"></div>
+                            </div>
+                            <div class="overview-details">
+                                <span class="overview-label">Pending Cards</span>
+                                <span class="overview-value">{{ pending_cards|default:"0" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overview-row centered">
+                        <div class="overview-item blocked">
+                            <div class="overview-icon">
+                                <i class="material-icons">block</i>
+                                <div class="status-indicator"></div>
+                            </div>
+                            <div class="overview-details">
+                                <span class="overview-label">Blocked Cards</span>
+                                <span class="overview-value">{{ blocked_cards|default:"0" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-cards">
+                    <h3>Recently Issued Cards</h3>
+                    <div class="cards-list">
+                        <div class="card-item">
+                            <div class="card-preview">
+                                <div class="card-type-indicator credit">
+                                    Credit
+                                </div>
+                                <div class="card-number">
+                                    •••• •••• •••• 4532
+                                </div>
+                                <div class="card-status active">
+                                    Active
+                                </div>
+                            </div>
+                            <div class="card-details">
+                                <div class="detail-group">
+                                    <span class="detail-label">Account</span>
+                                    <span class="detail-value">ACC43544105</span>
+                                </div>
+                                <div class="detail-group">
+                                    <span class="detail-label">Issued</span>
+                                    <span class="detail-value">2024-03-15</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <a href="#" class="action-btn warning">
+                                    <i class="material-icons">block</i>
+                                    Block
+                                </a>
+                                <a href="#" class="action-btn">
+                                    <i class="material-icons">visibility</i>
+                                    View
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-item">
+                            <div class="card-preview">
+                                <div class="card-type-indicator debit">
+                                    Debit
+                                </div>
+                                <div class="card-number">
+                                    •••• •••• •••• 7891
+                                </div>
+                                <div class="card-status pending">
+                                    Pending
+                                </div>
+                            </div>
+                            <div class="card-details">
+                                <div class="detail-group">
+                                    <span class="detail-label">Account</span>
+                                    <span class="detail-value">ACC32886858</span>
+                                </div>
+                                <div class="detail-group">
+                                    <span class="detail-label">Issued</span>
+                                    <span class="detail-value">2024-03-14</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <a href="#" class="action-btn">
+                                    <i class="material-icons">visibility</i>
+                                    View
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-item">
+                            <div class="card-preview">
+                                <div class="card-type-indicator credit">
+                                    Credit
+                                </div>
+                                <div class="card-number">
+                                    •••• •••• •••• 3214
+                                </div>
+                                <div class="card-status block">
+                                    Blocked
+                                </div>
+                            </div>
+                            <div class="card-details">
+                                <div class="detail-group">
+                                    <span class="detail-label">Account</span>
+                                    <span class="detail-value">ACC98765432</span>
+                                </div>
+                                <div class="detail-group">
+                                    <span class="detail-label">Issued</span>
+                                    <span class="detail-value">2024-03-13</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <a href="#" class="action-btn success">
+                                    <i class="material-icons">check_circle</i>
+                                    Activate
+                                </a>
+                                <a href="#" class="action-btn">
+                                    <i class="material-icons">visibility</i>
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
+/* Base Layout */
+.dashboard-container {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Quick Stats */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.stat-card {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Main Grid */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    width: 100%;
+}
+
+.left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+    min-width: 0;
+}
+
+.right-section {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Section Styles */
+.section {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Transaction List */
+.transaction-list {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.transaction-item {
+    width: 100%;
+    min-width: 0;
+}
+
+.transaction-info {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.transaction-main,
+.transaction-details {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Card Overview */
+.card-overview {
+    width: 100%;
+}
+
+.overview-row {
+    width: 100%;
+}
+
+.overview-item {
+    min-width: 0;
+}
+
+/* Recent Cards */
+.cards-list {
+    width: 100%;
+}
+
+.card-item {
+    width: 100%;
+    min-width: 0;
+}
+
+.card-preview,
+.card-details,
+.card-actions {
+    min-width: 0;
+}
+
+/* Chart Container */
+.activity-chart {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 1400px) {
+    .main-grid {
+        gap: 1.5rem;
+    }
+
+    .card-item {
+        grid-template-columns: 1.5fr 1.5fr 1fr;
+    }
+}
+
+@media (max-width: 1200px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .transactions-section,
+    .activity-section,
+    .cards-section {
+        width: 100%;
+    }
+
+    .card-item {
+        grid-template-columns: 1.5fr 1.5fr 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .dashboard-container {
+        padding: 1.5rem;
+    }
+
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card-item {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .card-actions {
+        grid-column: span 2;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .quick-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .transactions-section,
+    .activity-section {
+        height: 400px;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .card-overview {
+        margin-bottom: 1.5rem;
+    }
+
+    .overview-row {
+        flex-direction: column;
+    }
+
+    .overview-row:not(.centered) {
+        justify-content: center;
+    }
+
+    .overview-item {
+        width: 100%;
+    }
+
+    .overview-row.centered .overview-item {
+        width: 100%;
+    }
+
+    .card-item {
+        grid-template-columns: 1fr;
+    }
+
+    .card-actions {
+        grid-column: auto;
+    }
+
+    .transaction-main,
+    .transaction-details {
+        white-space: normal;
+    }
+
+    .transaction-item {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container {
+        padding: 0.75rem;
+    }
+
+    .transactions-section,
+    .activity-section {
+        height: 350px;
+    }
+
+    .section {
+        padding: 0.75rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .primary-btn,
+    .view-all-btn,
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .transaction-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .transaction-details {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-preview,
+    .card-details {
+        gap: 0.5rem;
+    }
+
+    .card-number {
+        font-size: 0.875rem;
+    }
+
+    .detail-group {
+        width: 100%;
+    }
+}
+
+/* Fix for horizontal scrolling */
+.section > * {
+    max-width: 100%;
+}
+
+.transaction-type,
+.transaction-amount,
+.transaction-id,
+.transaction-date,
+.card-number,
+.detail-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Ensure buttons don't overflow */
+.action-btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Chart responsiveness */
+canvas {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
 /* Dashboard Container */
 .dashboard-container {
     padding: 2rem;
@@ -366,8 +658,158 @@
 /* Main Grid */
 .main-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
+}
+
+.left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.right-section {
+    height: 100%;
+}
+
+.transactions-section,
+.activity-section {
+    height: 450px;
+}
+
+.cards-section {
+    height: 100%;
+}
+
+@media (max-width: 1200px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .right-section {
+        height: auto;
+    }
+
+    .cards-section {
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .quick-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .transactions-section,
+    .activity-section {
+        height: 400px;
+    }
+
+    .card-overview {
+        margin-bottom: 1.5rem;
+    }
+
+    .overview-row {
+        flex-direction: column;
+    }
+
+    .overview-row:not(.centered) {
+        justify-content: center;
+    }
+
+    .overview-item {
+        width: 100%;
+    }
+
+    .overview-row.centered .overview-item {
+        width: 100%;
+    }
+
+    .card-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .card-actions {
+        justify-content: flex-start;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .transaction-item {
+        padding: 1rem;
+    }
+
+    .transaction-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .transaction-main,
+    .transaction-details {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .transaction-id {
+        font-size: 0.75rem;
+    }
+
+    .activity-chart {
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .transactions-section,
+    .activity-section {
+        height: 350px;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-icon {
+        padding: 0.75rem;
+    }
+
+    .stat-number {
+        font-size: 1.25rem;
+    }
+
+    .card-preview {
+        align-items: flex-start;
+    }
+
+    .card-number {
+        font-size: 1rem;
+    }
+
+    .card-actions {
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* Section Styles */
@@ -830,6 +1272,208 @@
     color: #64748b;
     background: var(--background-color);
     border-radius: 0.75rem;
+}
+
+/* Card Management Specific Styles */
+.cards-section {
+    width: 100%;
+    overflow: hidden;
+}
+
+.card-item {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.5rem;
+    background: var(--background-color);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.card-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.card-type-indicator {
+    display: inline-flex;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    width: fit-content;
+}
+
+.card-number {
+    font-family: monospace;
+    font-size: 1.125rem;
+    letter-spacing: 0.1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1200px) {
+    .card-item {
+        grid-template-columns: 1.5fr 1.5fr 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .card-item {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .card-actions {
+        grid-column: span 2;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .cards-section {
+        padding: 1rem;
+    }
+
+    .card-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .card-preview,
+    .card-details,
+    .card-actions {
+        width: 100%;
+    }
+
+    .card-actions {
+        grid-column: auto;
+        justify-content: flex-start;
+        margin-top: 0.5rem;
+    }
+
+    .card-type-indicator,
+    .card-status {
+        width: auto;
+        display: inline-flex;
+    }
+
+    .card-number {
+        font-size: 1rem;
+    }
+
+    .detail-group {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .cards-section {
+        padding: 0.75rem;
+    }
+
+    .card-item {
+        padding: 0.75rem;
+    }
+
+    .card-preview {
+        gap: 0.5rem;
+    }
+
+    .card-number {
+        font-size: 0.875rem;
+    }
+
+    .card-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .primary-btn,
+    .view-all-btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Overview Cards Responsive Fix */
+@media (max-width: 768px) {
+    .overview-row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .overview-item {
+        width: 100% !important;
+    }
+
+    .overview-row.centered {
+        margin-top: 0;
+    }
+
+    .overview-row.centered .overview-item {
+        width: 100% !important;
+    }
+}
+
+/* Fix for card status colors */
+.card-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    width: fit-content;
+}
+
+.card-status.active {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.card-status.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.card-status.block {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
 }
 </style>
 
