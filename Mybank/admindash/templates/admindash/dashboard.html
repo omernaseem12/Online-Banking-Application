@@ -107,13 +107,9 @@
                 <canvas id="userActivityChart"></canvas>
             </div>
             <div class="quick-actions">
-                <a href="{% url 'add_user' %}" class="action-btn">
+                <a href="{% url 'add_user' %}" class="action-btn blue">
                     <i class="material-icons">person_add</i>
                     Add New User
-                </a>
-                <a href="{% url 'issue_card' %}" class="action-btn">
-                    <i class="material-icons">add_card</i>
-                    Issue New Card
                 </a>
             </div>
         </div>
@@ -122,24 +118,153 @@
         <div class="section cards-section">
             <div class="section-header">
                 <h2>Card Management</h2>
-                <a href="{% url 'card_management' %}" class="view-all-btn">View All Cards</a>
-            </div>
-            <div class="card-stats">
-                <div class="card-stat-item">
-                    <div class="card-stat-label">Credit Cards</div>
-                    <div class="card-stat-value">{{ credit_cards|default:"0" }}</div>
-                </div>
-                <div class="card-stat-item">
-                    <div class="card-stat-label">Debit Cards</div>
-                    <div class="card-stat-value">{{ debit_cards|default:"0" }}</div>
-                </div>
-                <div class="card-stat-item">
-                    <div class="card-stat-label">Blocked Cards</div>
-                    <div class="card-stat-value">{{ blocked_cards|default:"0" }}</div>
+                <div class="header-actions">
+                    <a href="{% url 'issue_card' %}" class="primary-btn">
+                        <i class="material-icons">add_card</i>
+                        Issue New Card
+                    </a>
+                    <a href="{% url 'card_management' %}" class="view-all-btn">View All</a>
                 </div>
             </div>
-            <div class="card-distribution">
-                <canvas id="cardDistributionChart"></canvas>
+
+            <div class="card-overview">
+                <div class="overview-row">
+                    <div class="overview-item active">
+                        <div class="overview-icon">
+                            <i class="material-icons">credit_score</i>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="overview-details">
+                            <span class="overview-label">Active Cards</span>
+                            <span class="overview-value">{{ active_cards|default:"0" }}</span>
+                        </div>
+                    </div>
+                    <div class="overview-item pending">
+                        <div class="overview-icon">
+                            <i class="material-icons">pending</i>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="overview-details">
+                            <span class="overview-label">Pending Cards</span>
+                            <span class="overview-value">{{ pending_cards|default:"0" }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="overview-row centered">
+                    <div class="overview-item blocked">
+                        <div class="overview-icon">
+                            <i class="material-icons">block</i>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="overview-details">
+                            <span class="overview-label">Blocked Cards</span>
+                            <span class="overview-value">{{ blocked_cards|default:"0" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-cards">
+                <h3>Recently Issued Cards</h3>
+                <div class="cards-list">
+                    <div class="card-item">
+                        <div class="card-preview">
+                            <div class="card-type-indicator credit">
+                                Credit
+                            </div>
+                            <div class="card-number">
+                                •••• •••• •••• 4532
+                            </div>
+                            <div class="card-status active">
+                                Active
+                            </div>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail-group">
+                                <span class="detail-label">Account</span>
+                                <span class="detail-value">ACC43544105</span>
+                            </div>
+                            <div class="detail-group">
+                                <span class="detail-label">Issued</span>
+                                <span class="detail-value">2024-03-15</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <a href="#" class="action-btn warning">
+                                <i class="material-icons">block</i>
+                                Block
+                            </a>
+                            <a href="#" class="action-btn">
+                                <i class="material-icons">visibility</i>
+                                View
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-item">
+                        <div class="card-preview">
+                            <div class="card-type-indicator debit">
+                                Debit
+                            </div>
+                            <div class="card-number">
+                                •••• •••• •••• 7891
+                            </div>
+                            <div class="card-status pending">
+                                Pending
+                            </div>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail-group">
+                                <span class="detail-label">Account</span>
+                                <span class="detail-value">ACC32886858</span>
+                            </div>
+                            <div class="detail-group">
+                                <span class="detail-label">Issued</span>
+                                <span class="detail-value">2024-03-14</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <a href="#" class="action-btn">
+                                <i class="material-icons">visibility</i>
+                                View
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-item">
+                        <div class="card-preview">
+                            <div class="card-type-indicator credit">
+                                Credit
+                            </div>
+                            <div class="card-number">
+                                •••• •••• •••• 3214
+                            </div>
+                            <div class="card-status block">
+                                Blocked
+                            </div>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail-group">
+                                <span class="detail-label">Account</span>
+                                <span class="detail-value">ACC98765432</span>
+                            </div>
+                            <div class="detail-group">
+                                <span class="detail-label">Issued</span>
+                                <span class="detail-value">2024-03-13</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <a href="#" class="action-btn success">
+                                <i class="material-icons">check_circle</i>
+                                Activate
+                            </a>
+                            <a href="#" class="action-btn">
+                                <i class="material-icons">visibility</i>
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -358,31 +483,284 @@
     color: white;
 }
 
-/* Card Stats */
-.card-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+/* Modern Card Management Styles */
+.cards-section {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.card-stat-item {
-    text-align: center;
-    padding: 1rem;
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.primary-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.primary-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.action-btn.blue {
+    background: var(--primary-color);
+    color: white;
+}
+
+.action-btn.blue:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.card-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.overview-row {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.overview-row:not(.centered) {
+    justify-content: space-between;
+}
+
+.overview-item {
     background: var(--background-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.3s ease;
+    width: calc(50% - 0.75rem); /* Half width minus half the gap */
+}
+
+.overview-row.centered .overview-item {
+    width: calc(50% - 0.75rem); /* Same width as items in first row */
+}
+
+.overview-item:hover {
+    transform: translateY(-5px);
+}
+
+.overview-icon {
+    position: relative;
+    background: var(--card-background);
+    padding: 1rem;
     border-radius: 0.75rem;
 }
 
-.card-stat-label {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin-bottom: 0.5rem;
+.overview-icon .material-icons {
+    font-size: 2rem;
 }
 
-.card-stat-value {
-    font-size: 1.25rem;
+.status-indicator {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--card-background);
+}
+
+.overview-item.active .overview-icon {
+    color: #10b981;
+}
+
+.overview-item.active .status-indicator {
+    background: #10b981;
+}
+
+.overview-item.pending .overview-icon {
+    color: #f59e0b;
+}
+
+.overview-item.pending .status-indicator {
+    background: #f59e0b;
+}
+
+.overview-item.blocked .overview-icon {
+    color: #ef4444;
+}
+
+.overview-item.blocked .status-indicator {
+    background: #ef4444;
+}
+
+.overview-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.overview-label {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.overview-value {
+    font-size: 1.5rem;
     font-weight: bold;
     color: var(--text-color);
+}
+
+.recent-cards {
+    margin-top: 2rem;
+}
+
+.recent-cards h3 {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.card-item {
+    background: var(--background-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.card-item:hover {
+    transform: translateX(5px);
+    background: var(--card-background);
+}
+
+.card-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card-type-indicator {
+    display: inline-flex;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.card-type-indicator.credit {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.card-type-indicator.debit {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.card-number {
+    font-family: monospace;
+    font-size: 1.125rem;
+    letter-spacing: 0.1em;
+}
+
+.card-status {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.card-status.active {
+    color: #10b981;
+}
+
+.card-status.pending {
+    color: #f59e0b;
+}
+
+.card-status.block {
+    color: #ef4444;
+}
+
+.card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.detail-value {
+    font-size: 0.875rem;
+    color: var(--text-color);
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.action-btn:not(.warning):not(.success) {
+    background: var(--card-background);
+    color: var(--text-color);
+}
+
+.action-btn.warning {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.action-btn.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(0.95);
+}
+
+.action-btn .material-icons {
+    font-size: 1.25rem;
 }
 
 /* Alerts */
@@ -493,37 +871,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             }
-        }
-    });
-
-    // Card Distribution Chart
-    const cardCtx = document.getElementById('cardDistributionChart').getContext('2d');
-    new Chart(cardCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Credit Cards', 'Debit Cards', 'Blocked Cards'],
-            datasets: [{
-                data: [{{ credit_cards|default:"0" }}, {{ debit_cards|default:"0" }}, {{ blocked_cards|default:"0" }}],
-                backgroundColor: [
-                    '#3b82f6',
-                    '#10b981',
-                    '#ef4444'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20
-                    }
-                }
-            },
-            cutout: '70%'
         }
     });
 });
