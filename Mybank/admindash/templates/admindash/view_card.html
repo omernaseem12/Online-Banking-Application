@@ -1,0 +1,727 @@
+{% extends "admindash/basic.html" %}
+
+{% block title %}Card Management - Banking Admin{% endblock %}
+
+{% block style %}
+@import url('https://fonts.googleapis.com/css2?family=josefin+Sans:wght@400;500;600;700&display=swap');
+
+html {
+  color: white
+}
+
+html,
+body {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.wrapper { padding: 48px 24px 2px; }
+
+@keyframes cardAnimation {
+  60% {
+    background-size: 480px 320px;
+    background-position-x: 60%;
+    background-position-y: 60%;
+  }
+}
+
+@keyframes cardGradient {
+  0% { background-position: 0% 10%; }
+  50% { background-position: 100% 91%; }
+  100% { background-position: 0% 10%; }
+}
+
+.theme {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  width: 360px;
+  gap: 12px;
+  margin-bottom: 24px;
+  margin-top: 16px;
+  img {
+    border-radius: 4px;
+    width: 100%;
+    height: auto;
+    background: rgb(42, 41, 45);
+    border: 1px solid rgb(0 0 0 / 2%);
+  }
+}
+
+h2 {
+  margin: 0;
+  margin-top: 24px;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.05), 0 3px 0 rgba(0,0,0,0.02);
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.card-wrapper {
+  box-sizing: border-box;
+  grid-gap: 24px;
+  display: grid;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 24px;
+  margin-top: 20px;
+}
+
+.modern-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  background-color: #0066ff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+  width: 100%;
+}
+
+.modern-button:hover {
+  background-color: #0052cc;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modern-button-red {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  background-color: #e53935;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+  width: 100%;
+}
+
+.modern-button-red:hover {
+  background-color: #c62828;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+.modern-button-orange {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  background-color: #fb8c00;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+  width: 100%;
+}
+
+.modern-button-orange:hover {
+  background-color: #ef6c00;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+.modern-button-green {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  background-color: #43a047;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+  width: 100%;
+}
+
+.modern-button-green:hover {
+  background-color: #388e3c;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.card {
+  color: white;
+  background-color: rgb(42, 41, 45);
+  border-radius: 10px;
+  height: 280px;
+  width: 440px;
+  min-width: 311px;
+  position: relative;
+  box-sizing: border-box;
+  padding: 24px;
+  display: grid;
+  margin-bottom: 24px;
+  grid-template-rows: 1fr auto;
+  font-family: AxLLCircular, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  box-shadow: 0 0px 8px rgb(0 0 0 / 12%), 0 2px 16px rgb(0 0 0 / 12%),
+    0 4px 20px rgb(0 0 0 / 12%), 0 12px 28px rgb(0 0 0 / 12%);
+  color: rgb(255, 255, 255);
+  &.digital {
+    background-size: 440px 280px;
+    animation-name: cardAnimation;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+    transform: translateZ(0);
+    color: black;
+    position: relative;
+    img {
+      filter: drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.3))
+        drop-shadow(0 2px 16px rgba(0, 0, 0, 0.12))
+        drop-shadow(0px 0px 12px rgba(255, 255, 255, 1));
+      filter: drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.3))
+        drop-shadow(0 2px 16px rgba(0, 0, 0, 0.12))
+        drop-shadow(0px 0px 12px rgba(255, 255, 255, 1));
+      filter: drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.3))
+        drop-shadow(0 2px 16px rgba(0, 0, 0, 0.12))
+        drop-shadow(0px 0px 12px rgba(255, 255, 255, 1));
+    }
+    &:before {
+      content: "";
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 -1px 0 0 rgb(255 255 255 / 90%), 0 1px 0 0 rgb(0 0 0 / 20%);
+      position: absolute;
+      z-index: 1;
+      border-radius: 10px;
+    }
+    &:after {
+      content: "";
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(
+          120deg,
+          rgb(255 255 255 / 2%) 30%,
+          rgb(255 255 255 / 25%) 40%,
+          rgb(255 255 255 / 8%) 40%
+        ),
+        linear-gradient(0deg, rgb(255 255 255 / 20%), rgb(255 255 255 / 30%));
+      background-size: 150% 150%;
+      animation: cardGradient 45s ease-in-out infinite;
+      transform: translateZ(0);
+      position: absolute;
+    }
+    &.one {
+      background-image: url("https://assets.codepen.io/14762/snowy-mint.jpg");
+    }
+    &.two {
+      background-image: url("https://assets.codepen.io/14762/egg-sour.jpg");
+    }
+    &.three {
+      background-image: url("https://assets.codepen.io/14762/columbia-blue.jpg");
+    }
+    &.four {
+      background-image: url("https://assets.codepen.io/14762/my-pink.jpg");
+    }
+    &.five {
+      background-image: url("https://assets.codepen.io/14762/buttercup.jpg");
+    }
+    &.six {
+      background-image: url("https://assets.codepen.io/14762/cream-whisper.jpg");
+    }
+    &.seven {
+      background-image: url("https://assets.codepen.io/14762/honeysuckle.jpg");
+    }
+    &.eight {
+      background-image: url("https://assets.codepen.io/14762/tonys-pink.jpg");
+    }
+    color: #1a1d21;
+  }
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 1;
+  span {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 500;
+  }
+  img {
+    height: 18px;
+  }
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  z-index: 1;
+  img {
+    height: 40px;
+  }
+}
+
+.card-name {
+  display: grid;
+  grid-gap: 8px;
+  p {
+    margin: 0;
+    font-size: 16px;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0px 8px rgb(0 0 0 / 12%);
+    font-weight: 700;
+    max-width: 232px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+  }
+  p:first-child {
+    font-weight: 500;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+  p:last-child {
+    max-width: 232px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .card {
+    width: 100%;
+    height: 210px;
+    min-width: auto;
+  }
+
+  .card.digital {
+    background-size: 100% 240px;
+  }
+
+  .card h1 {
+    font-size: 19px !important;
+  }
+
+  @keyframes cardAnimation {
+    60% {
+      background-size: 120% 280px;
+      background-position-x: 60%;
+      background-position-y: 60%;
+    }
+  }
+
+  .wrapper {
+    padding: 24px 12px 2px;
+  }
+
+  .card-wrapper {
+    grid-gap: 16px;
+    width: 100%;
+  }
+
+  .theme {
+    width: 100%;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .button-grid {
+    padding: 0 12px;
+    gap: 15px;
+    margin-top: 15px;
+  }
+
+  .modern-button {
+    padding: 14px 20px;
+    font-size: 14px;
+  }
+}
+
+.main-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 48px 24px;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  gap: 60px;
+}
+
+.left-section {
+  flex: 0 1 700px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.right-section {
+  width: 350px;
+  flex: 0 0 350px;
+  background-color: var(--bg-secondary);
+  border-radius: 10px;
+  padding: 24px;
+  height: fit-content;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode specific styles */
+[data-theme='dark'] .right-section {
+  background-color: rgb(42, 41, 45);
+}
+
+[data-theme='dark'] .info-title {
+  color: white;
+}
+
+[data-theme='dark'] .info-content {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme='dark'] .info-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .info-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme='dark'] .info-value {
+  color: white;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 35px;
+  width: 100%;
+  max-width: 600px;
+  margin: 40px auto 0;
+}
+
+.modern-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 24px;
+  background-color: #0066ff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+  width: 100%;
+}
+
+.info-section {
+  margin-bottom: 24px;
+}
+
+.info-section:last-child {
+  margin-bottom: 0;
+}
+
+.info-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.info-content {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: var(--text-muted);
+}
+
+.info-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+@media screen and (max-width: 1100px) {
+  .main-wrapper {
+    padding: 24px;
+  }
+
+  .container {
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .left-section {
+    width: 100%;
+  }
+
+  .right-section {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .button-grid {
+    gap: 25px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .main-wrapper {
+    padding: 16px;
+  }
+
+  .container {
+    gap: 30px;
+  }
+
+  .button-grid {
+    gap: 20px;
+  }
+
+  .modern-button {
+    padding: 16px 20px;
+    font-size: 14px;
+  }
+}
+
+{% endblock %}
+
+{% block body %}
+
+
+
+{%if messages %}
+<script>
+    {% for msg in messages %}
+    {% if msg.message == 'block' %}
+    Swal.fire({
+      icon: "error",
+      title: "Blocked",
+      text: "Blocked: Card Has Been Blocked",
+    });
+
+    {%elif msg.message == 'active' %}
+        Swal.fire({
+      icon: "success",
+      title: "Activated",
+      text: "Active: Card Has Been Activated",
+    });
+
+    {%elif msg.message == 'regen' %}
+        Swal.fire({
+      icon: "success",
+      title: "Replaced",
+      text: "Replaced: Card Has Been Replaced",
+    });
+
+     {%elif msg.message == 'atmstatus' %}
+        Swal.fire({
+      icon: "success",
+      title: "ATM Status Changed",
+      text: "ATM Status: Status Has Been Changed",
+    });
+    {%elif msg.message == 'onlinestatus' %}
+        Swal.fire({
+      icon: "success",
+      title: "Online Transactions Status Changed",
+      text: "Online Transactions: Status Has Been Changed",
+    });
+
+
+    {% endif %}
+    {% endfor %}
+</script>
+{%endif%}
+
+
+
+<div class="main-wrapper">
+  <div class="container">
+    <div class="left-section">
+      <div class="card-wrapper">
+        <div class="card digital two">
+          <div class="card-top">
+            <span>{{card.card_type}}</span>
+            <h3 style="letter-spacing: 2px; font-size:16px; font-weight:1000;">My Bank</h3>
+          </div>
+          <div>
+            <h1 style="padding:8px 0; font-size:27px; color:black; ">{{card_1}} {{card_2}} {{card_3}} {{card_4}}</h1>
+            <p style="padding-bottom:15px; font-size:12px; color:black; font-weight:600; ">&nbsp;From {{card.issue_date|date:"m/y"}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Exp {{card.expiration_date|date:"m/y"}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CVV
+              {{card.cvv}}</p>
+          </div>
+          <div class="card-bottom">
+            <div class="card-name">
+              <p>Cardholder</p>
+              <p>{{acc.first_name}} {{acc.last_name}}</p>
+            </div>
+            <img src="https://assets.codepen.io/14762/visa-virtual.svg">
+          </div>
+        </div>
+      </div>
+
+      <div class="button-grid">
+        {% if card.status == 'pending' %}
+        <a href="/admindash/card_management/show_more/active/{{card.id}}/" class="modern-button-green">Approve Card</a>
+        {% elif card.status == 'active' %}
+        <a href="/admindash/card_management/show_more/block/{{card.id}}/" class="modern-button-red">Block Card</a>
+        {% else %}
+        <a href="/admindash/card_management/show_more/active/{{card.id}}/" class="modern-button-orange">Re Activate Card</a>
+        {% endif %}
+
+        <a href="/admindash/card_management/show_more/regen/{{card.id}}/" onclick="return confirm('Are you sure you want to Regenerate this card?');" class="modern-button-orange">Regenerate Card</a>
+
+        {% if card.atm_withdrawal == True %}
+        <a href="/admindash/card_management/show_more/change_atm_status/{{card.id}}/" class="modern-button-red">Block ATM Transactions</a>
+        {% else %}
+        <a href="/admindash/card_management/show_more/change_atm_status/{{card.id}}/" class="modern-button-green">Open ATM Transactions</a>
+        {% endif %}
+
+        {% if card.online_tran == True %}
+        <a href="/admindash/card_management/show_more/change_online_status/{{card.id}}/" class="modern-button-red">Block Online Transactions</a>
+        {% else %}
+        <a href="/admindash/card_management/show_more/change_online_status/{{card.id}}/" class="modern-button-green">Open Online Transactions</a>
+        {% endif %}
+
+        <a href="/admindash/card_management/del/{{card.id}}/" onclick="return confirm('Are you sure you want to Delete this card?');" class="modern-button-red">Delete Card</a>
+
+      </div>
+    </div>
+
+    <div class="right-section">
+      <div class="info-section">
+        <h3 class="info-title">Card Details</h3>
+        <div class="info-content">
+          <div class="info-item">
+            <span class="info-label">Card Type</span>
+            <span class="info-value">{{card.card_type|title}}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Status</span>
+            <span class="info-value">{{card.status|title}}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Issue Date</span>
+            <span class="info-value">{{card.issue_date}}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Expiry Date</span>
+            <span class="info-value">{{card.expiration_date}}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Card Holder</span>
+            <span class="info-value">{{acc.first_name}} {{acc.last_name}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-title">Account Details</h3>
+        <div class="info-content">
+          <div class="info-item">
+            <span class="info-label">Account No</span>
+            <span class="info-value">{{card.account}}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">CNIC</span>
+            <span class="info-value">{{card.cnic}}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Account Title</span>
+            <span class="info-value">{{acc.first_name}} {{acc.last_name}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h3 class="info-title">Security</h3>
+        <div class="info-content">
+          <div class="info-item">
+            <span class="info-label">Last Used</span>
+            <span class="info-value">Today</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Online Transactions</span>
+            {% if card.online_tran == True %}
+            <span class="info-value">Enabled</span>
+            {% else %}
+            <span class="info-value">Disabled</span>
+            {% endif %}
+          </div>
+          <div class="info-item">
+            <span class="info-label">ATM Withdrawals</span>
+            {% if card.atm_withdrawal == True %}
+            <span class="info-value">Enabled</span>
+            {% else %}
+            <span class="info-value">Disabled</span>
+            {% endif %}
+          </div>
+          <div class="info-item">
+            <span class="info-label">CVV</span>
+            <span class="info-value">{{card.cvv}}</span>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+{% endblock %}

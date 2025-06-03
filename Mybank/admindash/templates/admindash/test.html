@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #1e40af;
+    --background-color: #f1f5f9;
+    --text-color: #1e293b;
+    --card-background: white;
+    --sidebar-width: 250px;
+    --transition-speed: 0.3s;
+}
+
+[data-theme="dark"] {
+    --primary-color: #3b82f6;
+    --secondary-color: #60a5fa;
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --card-background: #1e1e1e;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100vh;
+    transition: width var(--transition-speed), transform var(--transition-speed);
+}
+
+.sidebar.collapsed {
+    transform: translateX(calc(-1 * var(--sidebar-width)));
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+}
+
+.logo h2 {
+    font-size: 1.5rem;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    gap: 0.75rem;
+}
+
+nav ul li:hover {
+    background-color: var(--background-color);
+}
+
+nav ul li.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    transition: margin-left var(--transition-speed);
+}
+
+.main-content.expanded {
+    margin-left: 0;
+}
+
+header {
+    background-color: var(--card-background);
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color var(--transition-speed);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Cards Styles */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background-color: var(--card-background);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color var(--transition-speed);
+}
+
+.card-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.card-inner .material-icons {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.card-content h3 {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.change {
+    font-size: 0.875rem;
+}
+
+.change.positive {
+    color: #10b981;
+}
+
+.change.negative {
+    color: #ef4444;
+}
+
+/* Charts Styles */
+.charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+.chart {
+    background-color: var(--card-background);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color var(--transition-speed);
+}
+
+.chart h3 {
+    margin-bottom: 1rem;
+    color: #64748b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 1rem;
+    }
+
+    .sidebar .logo h2,
+    .sidebar nav ul li span:not(.material-icons) {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 70px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .charts {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sidebar-toggle {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.sidebar-toggle:hover {
+    background-color: var(--background-color);
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.theme-toggle:hover {
+    background-color: var(--background-color);
+}
+
+.material-icons {
+    transition: transform var(--transition-speed);
+}
+
+.sidebar-toggle.active {
+    transform: rotate(180deg);
+}
+
+/* Additional styles for banking interface */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: var(--card-background);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.data-table th,
+.data-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--background-color);
+}
+
+.data-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.data-table tbody tr:hover {
+    background-color: var(--background-color);
+}
+
+.status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-active {
+    background-color: #10b981;
+    color: white;
+}
+
+.status-blocked {
+    background-color: #ef4444;
+    color: white;
+}
+
+.status-pending {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.search-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--background-color);
+    border-radius: 0.5rem;
+    background-color: var(--card-background);
+    color: var(--text-color);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.tab-container {
+    margin-bottom: 2rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tab {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.quick-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background-color: var(--card-background);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card h3 {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.stat-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--background-color);
+}
+
+.stat-item .label {
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.stat-item .value {
+    font-weight: 500;
+}
+
+.recent-activity {
+    grid-column: 1 / -1;
+    background-color: var(--card-background);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.recent-activity h3 {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--background-color);
+    transition: transform 0.2s ease;
+}
+
+.activity-item:hover {
+    transform: translateX(5px);
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.activity-icon.transfer {
+    background-color: var(--primary-color);
+}
+
+.activity-icon.loan {
+    background-color: #10b981;
+}
+
+.activity-icon.card {
+    background-color: #8b5cf6;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-main {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+.activity-type {
+    font-weight: 500;
+}
+
+.activity-amount {
+    font-weight: 600;
+}
+
+.activity-sub {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.activity-time {
+    font-size: 0.875rem;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .charts {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="material-icons">account_balance</span>
+                <h2>Banking Admin</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active">
+                        <span class="material-icons">dashboard</span>
+                        <span>Dashboard</span>
+                    </li>
+                    <li>
+                        <span class="material-icons">people</span>
+                        <span>User Management</span>
+                    </li>
+                    <li>
+                        <span class="material-icons">account_balance_wallet</span>
+                        <span>Accounts</span>
+                    </li>
+                    <li>
+                        <span class="material-icons">credit_card</span>
+                        <span>Cards</span>
+                    </li>
+                    <li>
+                        <span class="material-icons">payments</span>
+                        <span>Loans</span>
+                    </li>
+                    <li>
+                        <span class="material-icons">receipt_long</span>
+                        <span>Transactions</span>
+                    </li>
+                    <li>
+                        <span class="material-icons">security</span>
+                        <span>Security</span>
+                    </li>
+                    <li>
+                        <span class="material-icons">settings</span>
+                        <span>Settings</span>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header>
+                <div class="header-content">
+                    <div class="header-left">
+                        <span class="material-icons sidebar-toggle">menu</span>
+                        <h1>Banking Dashboard</h1>
+                    </div>
+                    <div class="user-info">
+                        <button class="theme-toggle">
+                            <span class="material-icons">dark_mode</span>
+                        </button>
+                        <span class="material-icons">notifications</span>
+                        <div class="user-profile">
+                            <span class="material-icons">account_circle</span>
+                            <span>Admin User</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="cards">
+                <div class="card">
+                    <div class="card-inner">
+                        <span class="material-icons">group</span>
+                        <div class="card-content">
+                            <h3>Total Users</h3>
+                            <p class="number">15,234</p>
+                            <p class="change positive">+124 this month</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-inner">
+                        <span class="material-icons">account_balance_wallet</span>
+                        <div class="card-content">
+                            <h3>Total Accounts</h3>
+                            <p class="number">23,543</p>
+                            <p class="change positive">+215 this month</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-inner">
+                        <span class="material-icons">payments</span>
+                        <div class="card-content">
+                            <h3>Active Loans</h3>
+                            <p class="number">3,124</p>
+                            <p class="change negative">-52 this month</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-inner">
+                        <span class="material-icons">credit_card</span>
+                        <div class="card-content">
+                            <h3>Active Cards</h3>
+                            <p class="number">8,452</p>
+                            <p class="change positive">+143 this month</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="charts">
+                    <div class="chart">
+                        <h3>New Users Registration</h3>
+                        <canvas id="usersChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <h3>System Status</h3>
+                        <div class="stat-items">
+                            <div class="stat-item">
+                                <span class="label">Server Status</span>
+                                <span class="value status-active">Online</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Last Backup</span>
+                                <span class="value">2 hours ago</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Active Sessions</span>
+                                <span class="value">1,234</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>Today's Overview</h3>
+                        <div class="stat-items">
+                            <div class="stat-item">
+                                <span class="label">New Registrations</span>
+                                <span class="value">45</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Pending Approvals</span>
+                                <span class="value status-pending">23</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Support Tickets</span>
+                                <span class="value">12</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h3>Recent Transactions</h3>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon transfer">
+                                <span class="material-icons">swap_horiz</span>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-main">
+                                    <span class="activity-type">Fund Transfer</span>
+                                    <span class="activity-amount">$2,500</span>
+                                </div>
+                                <div class="activity-sub">
+                                    <span class="activity-time">2 minutes ago</span>
+                                    <span class="activity-status status-active">Completed</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon loan">
+                                <span class="material-icons">account_balance</span>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-main">
+                                    <span class="activity-type">Loan Payment</span>
+                                    <span class="activity-amount">$850</span>
+                                </div>
+                                <div class="activity-sub">
+                                    <span class="activity-time">15 minutes ago</span>
+                                    <span class="activity-status status-pending">Processing</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon card">
+                                <span class="material-icons">credit_card</span>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-main">
+                                    <span class="activity-type">Card Payment</span>
+                                    <span class="activity-amount">$150</span>
+                                </div>
+                                <div class="activity-sub">
+                                    <span class="activity-time">35 minutes ago</span>
+                                    <span class="activity-status status-active">Completed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.querySelector('.theme-toggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.dataset.theme = savedTheme;
+        updateThemeIcon();
+
+        themeToggle.addEventListener('click', () => {
+            const newTheme = html.dataset.theme === 'light' ? 'dark' : 'light';
+            html.dataset.theme = newTheme;
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
+        });
+
+        function updateThemeIcon() {
+            const icon = themeToggle.querySelector('.material-icons');
+            icon.textContent = html.dataset.theme === 'light' ? 'dark_mode' : 'light_mode';
+        }
+
+        // Sidebar Toggle
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        // Check for saved sidebar state
+        const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        if (sidebarCollapsed) {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('expanded');
+            sidebarToggle.classList.add('active');
+        }
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            sidebarToggle.classList.toggle('active');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        });
+
+        // Chart.js initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Users Chart
+            const usersCtx = document.getElementById('usersChart').getContext('2d');
+            new Chart(usersCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'New Users',
+                        data: [120, 190, 210, 240, 220, 283],
+                        fill: false,
+                        borderColor: '#2563eb',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Transactions Chart
+            const transactionsCtx = document.getElementById('transactionsChart').getContext('2d');
+            new Chart(transactionsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Transactions',
+                        data: [15000, 21000, 18000, 24000, 23000, 24500],
+                        backgroundColor: '#2563eb',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Notifications Animation
+        const notificationIcon = document.querySelector('.user-info .material-icons');
+        notificationIcon.addEventListener('click', function() {
+            this.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 200);
+        });
+    </script>
+</body>
+</html>

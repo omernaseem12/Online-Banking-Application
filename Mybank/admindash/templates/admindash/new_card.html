@@ -1,0 +1,425 @@
+{% extends "admindash/basic.html" %}
+
+{% block title %}Card Management - Banking Admin{% endblock %}
+
+{% block style %}
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.search-filters {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-grid {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    height: 85px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+    justify-content: center;
+}
+
+.form-input {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: var(--card-background);
+    color: var(--text-color);
+    font-size: 0.9375rem;
+    height: 42px;
+    width: 100%;
+}
+
+.form-group.search-cards {
+    width: 90%;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.find-link {
+    width: 10%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 80px;
+    height: 42px;
+    margin-top: 22px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9375rem;
+}
+
+.find-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .filter-grid {
+        flex-direction: column;
+        height: auto;
+        gap: 1rem;
+    }
+
+    .form-group {
+        height: auto;
+    }
+
+    .form-group.search-cards,
+    .find-link {
+        width: 100%;
+    }
+
+    .find-link {
+        margin-top: 0;
+    }
+}
+
+.issue-results-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+}
+
+.issue-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+}
+
+.issue-table thead th {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.issue-table tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.issue-table tbody tr:hover {
+    background: var(--bg-secondary);
+}
+
+.issue-amount-positive {
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.issue-status-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.issue-status-success {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+@media (max-width: 768px) {
+    .issue-table {
+        display: block;
+    }
+
+    .issue-table thead {
+        display: none;
+    }
+
+    .issue-table tbody tr {
+        display: block;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .issue-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border: none;
+    }
+
+    .issue-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+}
+
+.trans-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-top: 2rem;
+}
+
+.trans-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.trans-table th,
+.trans-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.trans-table th {
+    background: var(--background-color);
+    font-weight: 600;
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+.trans-table tr:hover {
+    background: var(--background-color);
+}
+
+.trans-amount-positive {
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.trans-status-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.trans-status-success {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+@media (max-width: 768px) {
+    .trans-card {
+        padding: 1rem;
+        border-radius: 0.75rem;
+    }
+
+    .trans-table {
+        display: block;
+    }
+
+    .trans-table thead {
+        display: none;
+    }
+
+    .trans-table tbody {
+        display: block;
+    }
+
+    .trans-table tr {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    .trans-table td {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: center;
+        padding: 0.5rem;
+        border: none;
+        font-size: 0.95rem;
+    }
+
+    .trans-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .trans-table td:last-child {
+        grid-template-columns: 1fr;
+        justify-items: end;
+    }
+}
+
+
+.btn-issue-card {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  padding: 5px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-issue-card:hover {
+  background-color: #388e3c;  /* Darker green */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+{% endblock %}
+
+{% block body %}
+
+{%if messages %}
+<script>
+    {% for msg in messages %}
+    {% if msg.message == 'done' %}
+    Swal.fire({
+      icon: "success",
+      title: "Card Issued",
+      text: "Success: Card Has Been Generated",
+    });
+
+    {% else %}
+       Swal.fire({
+      icon: "error",
+      title: "Failed",
+      text: "Failed: Failed to generate Card",
+    });
+    {% endif %}
+    {% endfor %}
+</script>
+{%endif%}
+
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Issue New Card</h1>
+    </div>
+    <div class="search-filters">
+        <form class="filter-grid" method="POST">
+            {% csrf_token %}
+            <div class="form-group search-cards">
+                <label class="form-label">Search Cards</label>
+                <input type="text" name="search" class="form-input" placeholder="Search by card #, account #, CNIC #">
+            </div>
+
+            <button type="submit" class="find-link">
+                <span class="material-icons">search</span>
+                Find
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="trans-card">
+    <table class="trans-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total Cards</th>
+                <th>Active Cards</th>
+                <th>Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td data-label="Name">{{customer.first_name}} {{customer.last_name}}</td>
+                <td data-label="Total-cards">{{customer.total_cards}}</td>
+                <td data-label="Active Cards">{{customer.active_cards}}</td>
+                <td data-label=""><a class="btn-issue-card" onclick="openCardTypePopup('{{ customer.user_id }}')" > Issue Card </a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block script %}
+
+ function openCardTypePopup(customerId) {
+    Swal.fire({
+      title: 'Select Card Type',
+      input: 'select',
+      inputOptions: {
+        'classic': 'Classic Card',
+        'gold': 'Gold Card',
+        'platinum': 'Platinum Card'
+      },
+      inputPlaceholder: 'Choose a card type',
+      showCancelButton: true,
+      confirmButtonText: 'Create',
+      cancelButtonText: 'Cancel',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to select a card type!'
+        }
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const selectedType = result.value;
+        // Construct the target URL dynamically
+        const issueUrl = `/admindash/card_management/issue_card_fun/${customerId}/${selectedType}/`; // Adjust URL pattern
+        window.location.href = issueUrl;
+      }
+    });
+  }
+
+
+{% endblock %} 

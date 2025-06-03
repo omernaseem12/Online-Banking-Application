@@ -1,0 +1,265 @@
+{% extends "admindash/basic.html" %}
+
+{% block title %}Add New User - Banking Admin{% endblock %}
+
+{% block style %}
+.add-user-container {
+    padding: 8px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.form-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.0rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: var(--background-color);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-input::placeholder {
+    color: #94a3b8;
+}
+
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: var(--background-color);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    grid-column: 1 / -1;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary {
+    background: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid #e2e8f0;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.btn-secondary:hover {
+    background: red;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+}
+
+@media (max-width: 768px) {
+    .add-user-container {
+        padding: 1rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+{% endblock %}
+
+{% block body %}
+
+{%if messages %}
+<script>
+    {% for msg in messages %}
+    {% if msg.message == 'Error' %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Failed: User Already Exist",
+    });
+    {% elif msg.message == 'pass_error' %}
+        Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Password Does Not Match",
+    });
+    {% else %}
+        Swal.fire({
+          title: "Successfully Registered",
+          icon: "success",
+          draggable: true
+        });
+    {% endif %}
+    {% endfor %}
+</script>
+{%endif%}
+
+<div class="add-user-container">
+    <div class="page-header">
+        <h2>Add New User</h2>
+        <p>Create a new user account by filling in the required information</p>
+    </div>
+
+    <form class="form-card" method="POST" action="/admindash/add_user_fun/">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" class="form-input" placeholder="Enter first name" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" class="form-input" placeholder="Enter last name" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="cnic">CNIC Number</label>
+                <input type="text" id="cnic" name="cnic" class="form-input" placeholder="00000-0000000-0" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" class="form-input" placeholder="+1 (212) 300-0000" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="Enter email address" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="Enter password" required>
+            </div>
+
+             <div class="form-group">
+                <label class="form-label" for="c_password">Confirm Password</label>
+                <input type="password" id="c_password" name="c_password" class="form-input" placeholder="Enter password" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="accountType">Account Type</label>
+                <select id="accountType" name="accountType" class="form-select" required>
+                    <option value="">Select account type</option>
+                    <option value="savings">Savings Account</option>
+                    <option value="current">Current Account</option>
+                    <option value="business">Business Account</option>
+                    <option value="student">Student Account</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="address">Address</label>
+                <input type="text" id="address" name="address" class="form-input" placeholder="Enter complete address" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='/admindash/user_management'">
+                    <span class="material-icons"></span>
+                    Cancel
+                </button>
+                <button type="submit" name="create-user" class="btn btn-primary">
+                    <span class="material-icons">check</span>
+                    Create User
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %} 
