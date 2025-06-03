@@ -1,2 +1,532 @@
 {%extends 'admindash/basic.html'%}
+{% block title %}Admin Dashboard - MyBank{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    <!-- Quick Stats Section -->
+    <div class="quick-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="material-icons">people</i>
+            </div>
+            <div class="stat-info">
+                <h3>Total Users</h3>
+                <div class="stat-number">{{ total_users|default:"0" }}</div>
+                <div class="stat-change positive">
+                    <i class="material-icons">trending_up</i>
+                    <span>{{ new_users_today|default:"0" }} today</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="material-icons">credit_card</i>
+            </div>
+            <div class="stat-info">
+                <h3>Active Cards</h3>
+                <div class="stat-number">{{ active_cards|default:"0" }}</div>
+                <div class="stat-change">
+                    <span>{{ pending_cards|default:"0" }} pending</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="material-icons">account_balance</i>
+            </div>
+            <div class="stat-info">
+                <h3>Total Balance</h3>
+                <div class="stat-number">${{ total_balance|default:"0.00" }}</div>
+                <div class="stat-change positive">
+                    <i class="material-icons">trending_up</i>
+                    <span>+{{ balance_change|default:"0.00" }}%</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="material-icons">swap_horiz</i>
+            </div>
+            <div class="stat-info">
+                <h3>Today's Transactions</h3>
+                <div class="stat-number">{{ todays_transactions|default:"0" }}</div>
+                <div class="stat-amount">${{ transaction_volume|default:"0.00" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-grid">
+        <!-- Recent Transactions -->
+        <div class="section transactions-section">
+            <div class="section-header">
+                <h2>Recent Transactions</h2>
+                <a href="{% url 'transactions' %}" class="view-all-btn">View All</a>
+            </div>
+            <div class="transaction-list">
+                {% if recent_transactions %}
+                    {% for transaction in recent_transactions %}
+                    <div class="transaction-item">
+                        <div class="transaction-icon">
+                            {% if transaction.type == 'Deposit' %}
+                            <i class="material-icons success">arrow_downward</i>
+                            {% elif transaction.type == 'Withdrawal' %}
+                            <i class="material-icons warning">arrow_upward</i>
+                            {% else %}
+                            <i class="material-icons">swap_horiz</i>
+                            {% endif %}
+                        </div>
+                        <div class="transaction-info">
+                            <div class="transaction-main">
+                                <span class="transaction-type">{{ transaction.type }}</span>
+                                <span class="transaction-amount">${{ transaction.amount }}</span>
+                            </div>
+                            <div class="transaction-details">
+                                <span class="transaction-id">{{ transaction.trans_id }}</span>
+                                <span class="transaction-date">{{ transaction.date }}</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'transaction_details' transaction.trans_id %}" class="transaction-action">
+                            <i class="material-icons">chevron_right</i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-data">No recent transactions</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- User Activity -->
+        <div class="section activity-section">
+            <div class="section-header">
+                <h2>User Activity</h2>
+                <a href="{% url 'user_management' %}" class="view-all-btn">Manage Users</a>
+            </div>
+            <div class="activity-chart">
+                <canvas id="userActivityChart"></canvas>
+            </div>
+            <div class="quick-actions">
+                <a href="{% url 'add_user' %}" class="action-btn">
+                    <i class="material-icons">person_add</i>
+                    Add New User
+                </a>
+                <a href="{% url 'issue_card' %}" class="action-btn">
+                    <i class="material-icons">add_card</i>
+                    Issue New Card
+                </a>
+            </div>
+        </div>
+
+        <!-- Card Management -->
+        <div class="section cards-section">
+            <div class="section-header">
+                <h2>Card Management</h2>
+                <a href="{% url 'card_management' %}" class="view-all-btn">View All Cards</a>
+            </div>
+            <div class="card-stats">
+                <div class="card-stat-item">
+                    <div class="card-stat-label">Credit Cards</div>
+                    <div class="card-stat-value">{{ credit_cards|default:"0" }}</div>
+                </div>
+                <div class="card-stat-item">
+                    <div class="card-stat-label">Debit Cards</div>
+                    <div class="card-stat-value">{{ debit_cards|default:"0" }}</div>
+                </div>
+                <div class="card-stat-item">
+                    <div class="card-stat-label">Blocked Cards</div>
+                    <div class="card-stat-value">{{ blocked_cards|default:"0" }}</div>
+                </div>
+            </div>
+            <div class="card-distribution">
+                <canvas id="cardDistributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- System Alerts -->
+        <div class="section alerts-section">
+            <div class="section-header">
+                <h2>System Alerts</h2>
+                <button class="refresh-btn">
+                    <i class="material-icons">refresh</i>
+                </button>
+            </div>
+            <div class="alerts-list">
+                {% if system_alerts %}
+                    {% for alert in system_alerts %}
+                    <div class="alert-item {{ alert.level }}">
+                        <i class="material-icons">{{ alert.icon }}</i>
+                        <div class="alert-content">
+                            <div class="alert-title">{{ alert.title }}</div>
+                            <div class="alert-message">{{ alert.message }}</div>
+                        </div>
+                        <span class="alert-time">{{ alert.time }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-data">No active alerts</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Dashboard Container */
+.dashboard-container {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Quick Stats Section */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+}
+
+.stat-info h3 {
+    color: var(--text-color);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.stat-change {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.stat-change.positive {
+    color: #10b981;
+}
+
+.stat-change.negative {
+    color: #ef4444;
+}
+
+/* Main Grid */
+.main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+/* Section Styles */
+.section {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+
+.view-all-btn {
+    color: var(--primary-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Transaction List */
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: var(--background-color);
+    transition: transform 0.3s ease;
+}
+
+.transaction-item:hover {
+    transform: translateX(5px);
+}
+
+.transaction-icon {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.transaction-info {
+    flex: 1;
+}
+
+.transaction-main {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+.transaction-type {
+    font-weight: 500;
+}
+
+.transaction-amount {
+    font-weight: bold;
+}
+
+.transaction-details {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+/* Activity Chart */
+.activity-chart {
+    height: 200px;
+    margin-bottom: 1.5rem;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--background-color);
+    color: var(--primary-color);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Card Stats */
+.card-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--background-color);
+    border-radius: 0.75rem;
+}
+
+.card-stat-label {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.card-stat-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Alerts */
+.alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.alert-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: var(--background-color);
+}
+
+.alert-item.warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.alert-item.danger {
+    border-left: 4px solid #ef4444;
+}
+
+.alert-item.success {
+    border-left: 4px solid #10b981;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-title {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.alert-message {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.alert-time {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.refresh-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s;
+}
+
+.refresh-btn:hover {
+    background: var(--background-color);
+}
+
+.no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #64748b;
+    background: var(--background-color);
+    border-radius: 0.75rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // User Activity Chart
+    const activityCtx = document.getElementById('userActivityChart').getContext('2d');
+    new Chart(activityCtx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Active Users',
+                data: [65, 59, 80, 81, 56, 55, 70],
+                fill: true,
+                borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                backgroundColor: `${getComputedStyle(document.documentElement).getPropertyValue('--primary-color')}33`,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        display: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Card Distribution Chart
+    const cardCtx = document.getElementById('cardDistributionChart').getContext('2d');
+    new Chart(cardCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Credit Cards', 'Debit Cards', 'Blocked Cards'],
+            datasets: [{
+                data: [{{ credit_cards|default:"0" }}, {{ debit_cards|default:"0" }}, {{ blocked_cards|default:"0" }}],
+                backgroundColor: [
+                    '#3b82f6',
+                    '#10b981',
+                    '#ef4444'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+});
+</script>
+{% endblock %}
 
