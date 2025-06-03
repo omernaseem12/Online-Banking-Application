@@ -6,8 +6,10 @@ from django.db.models import Q
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 import random
-
+from datetime import date
 # Create your views here.
+
+today = date.today()
 
 def is_superuser(user):
     return user.is_superuser
@@ -63,10 +65,47 @@ def generate_unique_trans_id():
         if not Transaction.objects.filter(trans_id=trans).exists():
             return trans
 
+
+
+
+
+
 @login_required
 @user_passes_test(is_superuser)
 def dashboard(request):
-    return render(request,'admindash/dashboard.html')
+
+    total_users = len(Customer.objects.all())
+    today_user = len(Customer.objects.filter(created_at=today))
+    act_card = len(Card.objects.filter(status = 'active'))
+    pending_cards = len(Card.objects.filter(status = 'pending'))
+    blocked_cards = len(Card.objects.filter(status = 'block'))
+    customers = Customer.objects.all()
+    total_balance = 0.0
+    total_amount_trans = 0.0
+    for customer in customers:
+        total_balance = float(total_balance)+ float(customer.balance)
+    today_trans = Transaction.objects.filter(date = today)
+    len_today_trans = len(today_trans)
+    for trans in today_trans:
+        total_amount_trans = float(total_amount_trans) + float(abs(trans.amount))
+
+    recent_trans = Transaction.objects.all().order_by('-id')[:6]
+    recent_cards = Card.objects.all().order_by('-id')[:4]
+    for card in recent_cards:
+        card.last_4 = card.card_number[-4:]
+    recent_users = Customer.objects.all().order_by('-id')[:4]
+    dic={'total_users':total_users,'act_card':act_card,'pending_cards':pending_cards,
+         'blocked_cards':blocked_cards,'total_balance':total_balance,
+         'total_amount_trans':total_amount_trans,'len_today_trans':len_today_trans,
+         'recent_trans':recent_trans,'recent_cards':recent_cards,'recent_users':recent_users,'today_user':today_user}
+    return render(request,'admindash/dashboard.html',dic)
+
+
+
+
+
+
+
 
 
 @login_required
@@ -468,8 +507,8 @@ def issue_card_fun(request,customerId,selectedType):
 def fake_tran(request):
     trans_id = generate_unique_trans_id()
     account = 'ACC43544105'
-    type = 'Deposit'
-    amount = 2000
+    type = 'Withdrawal'
+    amount = 1000
     description = "nothing"
     recipient_account = 'ACC32886858'
     Transaction.objects.create(trans_id=trans_id,amount=amount,account=account,type=type,description=description,recipient_account=recipient_account)

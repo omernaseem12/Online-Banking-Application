@@ -1,282 +1,8 @@
 {%extends 'admindash/basic.html'%}
 {% block title %}Admin Dashboard - MyBank{% endblock %}
 
-{% block body %}
-<div class="dashboard-container">
-    <!-- Quick Stats Section -->
-    <div class="quick-stats">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="material-icons">people</i>
-            </div>
-            <div class="stat-info">
-                <h3>Total Users</h3>
-                <div class="stat-number">{{ total_users|default:"0" }}</div>
-                <div class="stat-change positive">
-                    <i class="material-icons">trending_up</i>
-                    <span>{{ new_users_today|default:"0" }} today</span>
-                </div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="material-icons">credit_card</i>
-            </div>
-            <div class="stat-info">
-                <h3>Active Cards</h3>
-                <div class="stat-number">{{ active_cards|default:"0" }}</div>
-                <div class="stat-change">
-                    <span>{{ pending_cards|default:"0" }} pending</span>
-                </div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="material-icons">account_balance</i>
-            </div>
-            <div class="stat-info">
-                <h3>Total Balance</h3>
-                <div class="stat-number">${{ total_balance|default:"0.00" }}</div>
-                <div class="stat-change positive">
-                    <i class="material-icons">trending_up</i>
-                    <span>+{{ balance_change|default:"0.00" }}%</span>
-                </div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="material-icons">swap_horiz</i>
-            </div>
-            <div class="stat-info">
-                <h3>Today's Transactions</h3>
-                <div class="stat-number">{{ todays_transactions|default:"0" }}</div>
-                <div class="stat-amount">${{ transaction_volume|default:"0.00" }}</div>
-            </div>
-        </div>
-    </div>
+{% block style%}
 
-    <!-- Main Content Grid -->
-    <div class="main-grid">
-        <!-- Left Section -->
-        <div class="left-section">
-            <!-- Recent Transactions -->
-            <div class="section transactions-section">
-                <div class="section-header">
-                    <h2>Recent Transactions</h2>
-                    <a href="{% url 'transactions' %}" class="view-all-btn">View All</a>
-                </div>
-                <div class="transaction-list">
-                    {% if recent_transactions %}
-                        {% for transaction in recent_transactions %}
-                        <div class="transaction-item">
-                            <div class="transaction-icon">
-                                {% if transaction.type == 'Deposit' %}
-                                <i class="material-icons success">arrow_downward</i>
-                                {% elif transaction.type == 'Withdrawal' %}
-                                <i class="material-icons warning">arrow_upward</i>
-                                {% else %}
-                                <i class="material-icons">swap_horiz</i>
-                                {% endif %}
-                            </div>
-                            <div class="transaction-info">
-                                <div class="transaction-main">
-                                    <span class="transaction-type">{{ transaction.type }}</span>
-                                    <span class="transaction-amount">${{ transaction.amount }}</span>
-                                </div>
-                                <div class="transaction-details">
-                                    <span class="transaction-id">{{ transaction.trans_id }}</span>
-                                    <span class="transaction-date">{{ transaction.date }}</span>
-                                </div>
-                            </div>
-                            <a href="{% url 'transaction_details' transaction.trans_id %}" class="transaction-action">
-                                <i class="material-icons">chevron_right</i>
-                            </a>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="no-data">No recent transactions</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- User Activity -->
-            <div class="section activity-section">
-                <div class="section-header">
-                    <h2>User Activity</h2>
-                    <a href="{% url 'user_management' %}" class="view-all-btn">Manage Users</a>
-                </div>
-                <div class="activity-chart">
-                    <canvas id="userActivityChart"></canvas>
-                </div>
-                <div class="quick-actions">
-                    <a href="{% url 'add_user' %}" class="action-btn blue">
-                        <i class="material-icons">person_add</i>
-                        Add New User
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Section -->
-        <div class="right-section">
-            <!-- Card Management -->
-            <div class="section cards-section">
-                <div class="section-header">
-                    <h2>Card Management</h2>
-                    <div class="header-actions">
-                        <a href="{% url 'issue_card' %}" class="primary-btn">
-                            <i class="material-icons">add_card</i>
-                            Issue New Card
-                        </a>
-                        <a href="{% url 'card_management' %}" class="view-all-btn">View All</a>
-                    </div>
-                </div>
-
-                <div class="card-overview">
-                    <div class="overview-row">
-                        <div class="overview-item active">
-                            <div class="overview-icon">
-                                <i class="material-icons">credit_score</i>
-                                <div class="status-indicator"></div>
-                            </div>
-                            <div class="overview-details">
-                                <span class="overview-label">Active Cards</span>
-                                <span class="overview-value">{{ active_cards|default:"0" }}</span>
-                            </div>
-                        </div>
-                        <div class="overview-item pending">
-                            <div class="overview-icon">
-                                <i class="material-icons">pending</i>
-                                <div class="status-indicator"></div>
-                            </div>
-                            <div class="overview-details">
-                                <span class="overview-label">Pending Cards</span>
-                                <span class="overview-value">{{ pending_cards|default:"0" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="overview-row centered">
-                        <div class="overview-item blocked">
-                            <div class="overview-icon">
-                                <i class="material-icons">block</i>
-                                <div class="status-indicator"></div>
-                            </div>
-                            <div class="overview-details">
-                                <span class="overview-label">Blocked Cards</span>
-                                <span class="overview-value">{{ blocked_cards|default:"0" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="recent-cards">
-                    <h3>Recently Issued Cards</h3>
-                    <div class="cards-list">
-                        <div class="card-item">
-                            <div class="card-preview">
-                                <div class="card-type-indicator credit">
-                                    Credit
-                                </div>
-                                <div class="card-number">
-                                    •••• •••• •••• 4532
-                                </div>
-                                <div class="card-status active">
-                                    Active
-                                </div>
-                            </div>
-                            <div class="card-details">
-                                <div class="detail-group">
-                                    <span class="detail-label">Account</span>
-                                    <span class="detail-value">ACC43544105</span>
-                                </div>
-                                <div class="detail-group">
-                                    <span class="detail-label">Issued</span>
-                                    <span class="detail-value">2024-03-15</span>
-                                </div>
-                            </div>
-                            <div class="card-actions">
-                                <a href="#" class="action-btn warning">
-                                    <i class="material-icons">block</i>
-                                    Block
-                                </a>
-                                <a href="#" class="action-btn">
-                                    <i class="material-icons">visibility</i>
-                                    View
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="card-item">
-                            <div class="card-preview">
-                                <div class="card-type-indicator debit">
-                                    Debit
-                                </div>
-                                <div class="card-number">
-                                    •••• •••• •••• 7891
-                                </div>
-                                <div class="card-status pending">
-                                    Pending
-                                </div>
-                            </div>
-                            <div class="card-details">
-                                <div class="detail-group">
-                                    <span class="detail-label">Account</span>
-                                    <span class="detail-value">ACC32886858</span>
-                                </div>
-                                <div class="detail-group">
-                                    <span class="detail-label">Issued</span>
-                                    <span class="detail-value">2024-03-14</span>
-                                </div>
-                            </div>
-                            <div class="card-actions">
-                                <a href="#" class="action-btn">
-                                    <i class="material-icons">visibility</i>
-                                    View
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="card-item">
-                            <div class="card-preview">
-                                <div class="card-type-indicator credit">
-                                    Credit
-                                </div>
-                                <div class="card-number">
-                                    •••• •••• •••• 3214
-                                </div>
-                                <div class="card-status block">
-                                    Blocked
-                                </div>
-                            </div>
-                            <div class="card-details">
-                                <div class="detail-group">
-                                    <span class="detail-label">Account</span>
-                                    <span class="detail-value">ACC98765432</span>
-                                </div>
-                                <div class="detail-group">
-                                    <span class="detail-label">Issued</span>
-                                    <span class="detail-value">2024-03-13</span>
-                                </div>
-                            </div>
-                            <div class="card-actions">
-                                <a href="#" class="action-btn success">
-                                    <i class="material-icons">check_circle</i>
-                                    Activate
-                                </a>
-                                <a href="#" class="action-btn">
-                                    <i class="material-icons">visibility</i>
-                                    View
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
 /* Base Layout */
 .dashboard-container {
     padding: 2rem;
@@ -386,8 +112,7 @@
 
 /* Chart Container */
 .activity-chart {
-    width: 100%;
-    min-width: 0;
+    display: none;
 }
 
 /* Responsive Styles */
@@ -552,7 +277,7 @@
     }
 
     .card-number {
-        font-size: 0.875rem;
+        font-size: 0.8rem;
     }
 
     .detail-group {
@@ -678,7 +403,7 @@ canvas {
 }
 
 .cards-section {
-    height: 100%;
+    height: 920px;
 }
 
 @media (max-width: 1200px) {
@@ -692,7 +417,7 @@ canvas {
     }
 
     .cards-section {
-        height: auto;
+        height: 820px;
     }
 }
 
@@ -709,6 +434,10 @@ canvas {
     .transactions-section,
     .activity-section {
         height: 400px;
+    }
+
+    .cards-section {
+        height: 820px;
     }
 
     .card-overview {
@@ -771,8 +500,8 @@ canvas {
         font-size: 0.75rem;
     }
 
-    .activity-chart {
-        height: 300px;
+    .activity-list {
+        max-height: 300px;
     }
 }
 
@@ -780,6 +509,10 @@ canvas {
     .transactions-section,
     .activity-section {
         height: 350px;
+    }
+
+    .cards-section {
+        height: 720px;
     }
 
     .stat-card {
@@ -799,7 +532,7 @@ canvas {
     }
 
     .card-number {
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
 
     .card-actions {
@@ -1090,7 +823,8 @@ canvas {
 
 .card-item:hover {
     transform: translateX(5px);
-    background: var(--card-background);
+    background: rgba(0, 0, 255, 0.2) ;
+
 }
 
 .card-preview {
@@ -1115,11 +849,14 @@ canvas {
 .card-type-indicator.debit {
     background: rgba(16, 185, 129, 0.1);
     color: #10b981;
+}.card-type-indicator.gold {
+    background: rgba(255, 255, 0, 0.2);
+    color: rgba(255, 255, 0);
 }
 
 .card-number {
     font-family: monospace;
-    font-size: 1.125rem;
+    font-size: 0.8rem;
     letter-spacing: 0.1em;
 }
 
@@ -1309,8 +1046,7 @@ canvas {
 
 .card-number {
     font-family: monospace;
-    font-size: 1.125rem;
-    letter-spacing: 0.1em;
+    font-size: 0.8rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1384,7 +1120,7 @@ canvas {
     }
 
     .card-number {
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
 
     .detail-group {
@@ -1406,7 +1142,7 @@ canvas {
     }
 
     .card-number {
-        font-size: 0.875rem;
+        font-size: 0.8rem;
     }
 
     .card-actions {
@@ -1475,49 +1211,551 @@ canvas {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
 }
-</style>
 
-<script>
+/* New Activity List Styles */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.activity-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.activity-list::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 2px;
+}
+
+.activity-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--background-color);
+    border-radius: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.activity-item:hover {
+    transform: translateX(5px);
+}
+
+.activity-icon {
+    background: var(--card-background);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    color: var(--primary-color);
+}
+
+.activity-icon .material-icons {
+    font-size: 1.25rem;
+}
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.activity-user {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.activity-description {
+    font-size: 0.875rem;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.activity-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.activity-meta .material-icons {
+    font-size: 0.875rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.status-badge.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.status-badge.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.status-badge.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: #64748b;
+}
+
+.no-data .material-icons {
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+.no-data p {
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .activity-list {
+        max-height: 300px;
+    }
+
+    .activity-item {
+        padding: 0.75rem;
+    }
+
+    .activity-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .activity-time {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .activity-list {
+        max-height: 250px;
+    }
+
+    .activity-item {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .activity-status {
+        align-self: flex-start;
+    }
+}
+
+/* Scrollable Sections */
+.transactions-section,
+.activity-section {
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-list,
+.activity-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--background-color);
+}
+
+/* Remove scrolling from cards list */
+.cards-list {
+    padding-right: 0;
+    overflow: visible;
+}
+
+/* Webkit Scrollbar Styles */
+.transaction-list::-webkit-scrollbar,
+.activity-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.transaction-list::-webkit-scrollbar-track,
+.activity-list::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 3px;
+}
+
+.transaction-list::-webkit-scrollbar-thumb,
+.activity-list::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+
+/* Section Headers */
+.section-header {
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+}
+
+/* Transaction Items */
+.transaction-item {
+    background: var(--background-color);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.transaction-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .transactions-section,
+    .activity-section {
+        height: 400px;
+    }
+
+    .cards-section {
+        height: 820px;
+    }
+
+    .transaction-list,
+    .activity-list {
+        padding-right: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .transactions-section,
+    .activity-section {
+        height: 350px;
+    }
+
+    .cards-section {
+        height: 720px;
+    }
+}
+
+{% endblock %}
+
+
+
+{% block body %}
+<div class="dashboard-container">
+    <!-- Quick Stats Section -->
+    <div class="quick-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="material-icons">people</i>
+            </div>
+            <div class="stat-info">
+                <h3>Total Users</h3>
+                <div class="stat-number">{{ total_users }}</div>
+                <div class="stat-change positive">
+                    <i class="material-icons">trending_up</i>
+                    <span>{{ today_user|default:"0" }} today</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="material-icons">credit_card</i>
+            </div>
+            <div class="stat-info">
+                <h3>Active Cards</h3>
+                <div class="stat-number">{{ act_card|default:"0" }}</div>
+                <div class="stat-change">
+                    <span>{{ pending_cards|default:"0" }} pending</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="material-icons">account_balance</i>
+            </div>
+            <div class="stat-info">
+                <h3>Total Balance</h3>
+                <div class="stat-number">${{ total_balance|default:"0.00" }}</div>
+
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="material-icons">swap_horiz</i>
+            </div>
+            <div class="stat-info">
+                <h3>Today's Transactions</h3>
+                <div class="stat-number">{{ len_today_trans|default:0 }}</div>
+                <div class="stat-amount">${{ total_amount_trans|default:0.00 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-grid">
+        <!-- Left Section -->
+        <div class="left-section">
+            <!-- Recent Transactions -->
+            <div class="section transactions-section">
+                <div class="section-header">
+                    <h2>Recent Transactions</h2>
+                    <a href="{% url 'transactions' %}" class="view-all-btn">View All</a>
+                </div>
+                <div class="transaction-list">
+                    {% if recent_trans %}
+                        {% for transaction in recent_trans %}
+                        <div class="transaction-item">
+
+                                {% if transaction.type == 'Deposit' %}
+                                <div class="transaction-icon" style="background-color:green;" >
+                                <i class="material-icons success" style="background-color:green;" >arrow_downward</i>
+                                </div>
+                                {% elif transaction.type == 'Withdrawal' %}
+                                <div class="transaction-icon" style="background-color:red;" >
+                                <i class="material-icons warning">arrow_upward</i>
+                                </div>
+                                {% else %}
+                                <div class="transaction-icon" style="background-color:green;" >
+                                <i class="material-icons">swap_horiz</i>
+                                {% endif %}
+
+                            <div class="transaction-info">
+                                <div class="transaction-main">
+                                    <span class="transaction-type">{{ transaction.type }}</span>
+                                    <span class="transaction-amount"  >${{ transaction.amount }}</span>
+                                </div>
+                                <div class="transaction-details">
+                                    <span class="transaction-id">{{ transaction.trans_id }}</span>
+                                    <span class="transaction-date">{{ transaction.date }}</span>
+                                </div>
+                            </div>
+                            <a href="{% url 'transaction_detail' transaction.trans_id %}" class="transaction-action">
+                                <i class="material-icons">chevron_right</i>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-data">No recent transactions</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- User Activity -->
+            <div class="section activity-section">
+                <div class="section-header">
+                    <h2>User Activity</h2>
+                    <a href="{% url 'user_management' %}" class="view-all-btn">Manage Users</a>
+                </div>
+                <div class="activity-list">
+                    {% if user_activities %}
+                        {% for activity in user_activities %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                {% if activity.type == 'login' %}
+                                    <i class="material-icons">login</i>
+                                {% elif activity.type == 'transfer' %}
+                                    <i class="material-icons">sync_alt</i>
+                                {% elif activity.type == 'profile_update' %}
+                                    <i class="material-icons">edit</i>
+                                {% elif activity.type == 'password_change' %}
+                                    <i class="material-icons">lock</i>
+                                {% else %}
+                                    <i class="material-icons">circle</i>
+                                {% endif %}
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-header">
+                                    <span class="activity-user">{{ activity.user }}</span>
+                                    <span class="activity-time">{{ activity.timestamp }}</span>
+                                </div>
+                                <div class="activity-description">{{ activity.description }}</div>
+                                {% if activity.location %}
+                                <div class="activity-meta">
+                                    <i class="material-icons">location_on</i>
+                                    <span>{{ activity.location }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="activity-status">
+                                {% if activity.status == 'success' %}
+                                    <span class="status-badge success">Success</span>
+                                {% elif activity.status == 'warning' %}
+                                    <span class="status-badge warning">Warning</span>
+                                {% elif activity.status == 'error' %}
+                                    <span class="status-badge error">Failed</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-data">
+                            <i class="material-icons">history</i>
+                            <p>No recent activity</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="quick-actions">
+                    <a href="{% url 'add_user' %}" class="action-btn blue">
+                        <i class="material-icons">person_add</i>
+                        Add New User
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <!-- Card Management -->
+            <div class="section cards-section">
+                <div class="section-header">
+                    <h2>Card Management</h2>
+                    <div class="header-actions">
+                        <a href="{% url 'issue_card' %}" class="primary-btn">
+                            <i class="material-icons">add_card</i>
+                            Issue New Card
+                        </a>
+                        <a href="{% url 'card_management' %}" class="view-all-btn">View All</a>
+                    </div>
+                </div>
+
+                <div class="card-overview">
+                    <div class="overview-row">
+                        <div class="overview-item active">
+                            <div class="overview-icon">
+                                <i class="material-icons">credit_score</i>
+                                <div class="status-indicator"></div>
+                            </div>
+                            <div class="overview-details">
+                                <span class="overview-label">Active Cards</span>
+                                <span class="overview-value">{{ act_card|default:"0" }}</span>
+                            </div>
+                        </div>
+                        <div class="overview-item pending">
+                            <div class="overview-icon">
+                                <i class="material-icons">pending</i>
+                                <div class="status-indicator"></div>
+                            </div>
+                            <div class="overview-details">
+                                <span class="overview-label">Pending Cards</span>
+                                <span class="overview-value">{{ pending_cards|default:"0" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overview-row centered">
+                        <div class="overview-item blocked">
+                            <div class="overview-icon">
+                                <i class="material-icons">block</i>
+                                <div class="status-indicator"></div>
+                            </div>
+                            <div class="overview-details">
+                                <span class="overview-label">Blocked Cards</span>
+                                <span class="overview-value">{{ blocked_cards|default:"0" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-cards">
+                    <h3>Recently Issued Cards</h3>
+                    <div class="cards-list">
+
+                        {% for card in recent_cards %}
+                        <div class="card-item">
+                            <div class="card-preview">
+                                {% if card.card_type == 'platinum' %}
+                                <div class="card-type-indicator credit">
+                                    {{card.card_type|title }}
+                                </div>
+                                {% elif card.card_type == 'gold' %}
+                                <div class="card-type-indicator gold">
+                                    {{card.card_type|title }}
+                                </div>
+                                {% else %}
+                                <div class="card-type-indicator debit">
+                                    {{card.card_type|title }}
+                                </div>
+                                {% endif %}
+                                <div class="card-number">•••• {{card.last_4}}
+                                </div>
+                                {% if card.status == 'active' %}
+                                <div class="card-status active">
+                                    Active
+                                </div>
+                                {% elif card.status == 'pending' %}
+                                <div class="card-status pending">
+                                    Pending
+                                </div>
+                                {% else %}
+                                <div class="card-status block">
+                                    Blocked
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-details">
+                                <div class="detail-group">
+                                    <span class="detail-label">Account</span>
+                                    <span class="detail-value">{{ card.account }}</span>
+                                </div>
+                                <div class="detail-group">
+                                    <span class="detail-label">Issued</span>
+                                    <span class="detail-value">{{card.issue_date}}</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <a href="#" class="action-btn">
+                                    <i class="material-icons">visibility</i>
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
 document.addEventListener('DOMContentLoaded', function() {
-    // User Activity Chart
-    const activityCtx = document.getElementById('userActivityChart').getContext('2d');
-    new Chart(activityCtx, {
-        type: 'line',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-                label: 'Active Users',
-                data: [65, 59, 80, 81, 56, 55, 70],
-                fill: true,
-                borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
-                backgroundColor: `${getComputedStyle(document.documentElement).getPropertyValue('--primary-color')}33`,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        display: false
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
+    // Remove old chart initialization
 });
-</script>
+
 {% endblock %}
 
