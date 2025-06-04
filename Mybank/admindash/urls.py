@@ -25,6 +25,6 @@ urlpatterns = [
     path('card_management/show_more/regen/<int:id>/', views.replace_card,name='replace_card'),
     path('card_management/show_more/change_atm_status/<int:id>/', views.change_atm_status,name='change_atm_status'),
     path('card_management/show_more/change_online_status/<int:id>/', views.change_online_status,name='change_online_status'),
-    path('fake_tran/', views.fake_tran,name='fake_tran'),
+    #path('fake_tran/', views.fake_tran,name='fake_tran'),
 
 ]

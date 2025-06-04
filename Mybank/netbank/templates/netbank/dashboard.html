@@ -1,0 +1,431 @@
+{% extends 'netbank/basic.html' %}
+
+
+
+
+
+{% block title %}Dashboard - Banking Portal{% endblock %}
+
+{% block style %}
+.balance-card {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.balance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    z-index: 1;
+}
+
+.balance-card .card-inner {
+    position: relative;
+    z-index: 2;
+}
+
+.balance-card .card-inner .material-icons {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-size: 1.8rem;
+    padding: 0.8rem;
+}
+
+.balance-card .card-content h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.balance-card .number {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon.purple {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.stat-icon.green {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.stat-icon.red {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.stat-icon .material-icons {
+    font-size: 1.8rem;
+}
+
+.stat-info h4 {
+    color: var(--text-color);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.stat-info .amount {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.quick-action-btn {
+    background: var(--card-background);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1.25rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.quick-action-btn .material-icons {
+    font-size: 2rem;
+    color: #6366f1;
+}
+
+.quick-action-btn span:not(.material-icons) {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.quick-action-btn:hover {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.quick-action-btn:hover .material-icons {
+    color: white;
+}
+
+.transactions-section {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.view-all {
+    color: #6366f1;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.transaction-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: var(--background-color);
+    transition: transform 0.2s ease;
+}
+
+.transaction-item:hover {
+    transform: translateX(4px);
+}
+
+.transaction-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex: 1;
+}
+
+.transaction-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.transaction-icon .material-icons {
+    font-size: 1.25rem;
+}
+
+.transaction-icon.shopping {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.transaction-icon.salary {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.transaction-icon.transport {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.transaction-icon.food {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.transaction-details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.transaction-name {
+    font-weight: 500;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.transaction-date {
+    font-size: 0.8rem;
+    color: #64748b;
+    position: relative;
+    padding-left: 1rem;
+    white-space: nowrap;
+}
+
+.transaction-date::before {
+    content: '•';
+    position: absolute;
+    left: 0.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+}
+
+.transaction-amount {
+    font-weight: 600;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    margin-left: 1.5rem;
+}
+
+.transaction-amount.credit {
+    color: #10b981;
+}
+
+.transaction-amount.debit {
+    color: #ef4444;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #64748b;
+}
+
+.empty-state .material-icons {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+{% endblock %}
+
+{% block body %}
+<div class="card balance-card">
+    <div class="card-inner">
+        <span class="material-icons">account_balance_wallet</span>
+        <div class="card-content">
+            <h3>Available Balance</h3>
+            <div class="number">$24,562.00</div>
+            <div style="display: flex; gap: 1rem; font-size: 0.9rem;">
+                <span>•••• 4589</span>
+                <span style="color: rgba(255,255,255,0.7)">Savings Account</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon purple">
+            <span class="material-icons">trending_up</span>
+        </div>
+        <div class="stat-info">
+            <h4>Monthly Income</h4>
+            <div class="amount">$8,350.00</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon red">
+            <span class="material-icons">trending_down</span>
+        </div>
+        <div class="stat-info">
+            <h4>Monthly Expenses</h4>
+            <div class="amount">$4,220.00</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <span class="material-icons">savings</span>
+        </div>
+        <div class="stat-info">
+            <h4>Total Savings</h4>
+            <div class="amount">$12,680.00</div>
+        </div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <button class="quick-action-btn">
+        <span class="material-icons">swap_horiz</span>
+        <span>Transfer</span>
+    </button>
+    <button class="quick-action-btn">
+        <span class="material-icons">payments</span>
+        <span>Pay Bills</span>
+    </button>
+    <button class="quick-action-btn">
+        <span class="material-icons">credit_card</span>
+        <span>Cards</span>
+    </button>
+    <button class="quick-action-btn">
+        <span class="material-icons">account_balance</span>
+        <span>Loans</span>
+    </button>
+</div>
+
+<div class="transactions-section">
+    <div class="section-header">
+        <h3>Recent Transactions</h3>
+        <a href="/dashboard/transactions" class="view-all">
+            View All
+            <span class="material-icons" style="font-size: 1.1rem;">arrow_forward</span>
+        </a>
+    </div>
+
+    <div class="transaction-list">
+        <div class="transaction-item">
+            <div class="transaction-info">
+                <div class="transaction-icon shopping">
+                    <span class="material-icons">shopping_cart</span>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-name">Amazon Shopping</div>
+                    <div class="transaction-date">Today, 2:30 PM</div>
+                </div>
+            </div>
+            <div class="transaction-amount debit">-$85.20</div>
+        </div>
+
+        <div class="transaction-item">
+            <div class="transaction-info">
+                <div class="transaction-icon salary">
+                    <span class="material-icons">work</span>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-name">Salary Deposit</div>
+                    <div class="transaction-date">Mar 1, 2024</div>
+                </div>
+            </div>
+            <div class="transaction-amount credit">+$4,250.00</div>
+        </div>
+
+        <div class="transaction-item">
+            <div class="transaction-info">
+                <div class="transaction-icon transport">
+                    <span class="material-icons">local_gas_station</span>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-name">Shell Gas Station</div>
+                    <div class="transaction-date">Feb 29, 2024</div>
+                </div>
+            </div>
+            <div class="transaction-amount debit">-$45.80</div>
+        </div>
+
+        <div class="transaction-item">
+            <div class="transaction-info">
+                <div class="transaction-icon food">
+                    <span class="material-icons">restaurant</span>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-name">Cheesecake Factory</div>
+                    <div class="transaction-date">Feb 28, 2024</div>
+                </div>
+            </div>
+            <div class="transaction-amount debit">-$65.50</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}{% endblock %}
+});
