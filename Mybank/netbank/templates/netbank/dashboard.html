@@ -1,52 +1,151 @@
 {% extends 'netbank/basic.html' %}
 
-
-
-
-
 {% block title %}Dashboard - Banking Portal{% endblock %}
 
 {% block style %}
-.balance-card {
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    color: white;
+
+
+
+
+.card-section {
     position: relative;
-    overflow: hidden;
 }
 
-.balance-card::before {
+.credit-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    aspect-ratio: 1.6/1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.chip-icon {
+    width: 45px;
+    height: 35px;
+    background: linear-gradient(135deg, #ffd700, #ffa500);
+    border-radius: 5px;
+    position: relative;
+}
+
+.chip-icon::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 70%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+    border-radius: 3px;
 }
 
-.balance-card .card-inner {
-    position: relative;
-    z-index: 2;
+.card-type {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
 }
 
-.balance-card .card-inner .material-icons {
-    background-color: rgba(255, 255, 255, 0.2);
-    font-size: 1.8rem;
-    padding: 0.8rem;
+.card-number {
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    margin: 1rem 0;
 }
 
-.balance-card .card-content h3 {
-    color: rgba(255, 255, 255, 0.8);
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 0.9rem;
+}
+
+.card-holder {
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-.balance-card .number {
+.card-expiry {
+    opacity: 0.8;
+}
+
+.account-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.account-header {
+    margin-bottom: 1.5rem;
+}
+
+.account-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+    margin-bottom: 0.5rem;
+}
+
+.account-balance {
     font-size: 2.5rem;
     font-weight: 600;
-    margin: 0.5rem 0;
+    margin-bottom: 0.5rem;
+}
+
+.account-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.account-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.account-action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.account-action-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.account-action-btn .material-icons {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+
+    .credit-card {
+        max-width: 400px;
+        margin: 0 auto;
+    }
 }
 
 .stats-grid {
@@ -163,12 +262,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
 }
 
 .section-header h3 {
     font-size: 1.25rem;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-color);
+}
+
+.section-header h3 .material-icons {
+    font-size: 1.5rem;
+    color: #6366f1;
 }
 
 .view-all {
@@ -179,11 +289,42 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.view-all:hover {
+    background: rgba(99, 102, 241, 0.15);
+    transform: translateY(-1px);
 }
 
 .transaction-list {
     display: grid;
     gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Scrollbar styling */
+.transaction-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.transaction-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+}
+
+.transaction-list::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 3px;
+}
+
+.transaction-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.5);
 }
 
 .transaction-item {
@@ -193,11 +334,64 @@
     padding: 1rem;
     border-radius: 0.75rem;
     background: var(--background-color);
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .transaction-item:hover {
     transform: translateX(4px);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.transaction-view-more {
+    position: absolute;
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.5rem 1rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.transaction-item:hover .transaction-view-more {
+    right: 1rem;
+    opacity: 1;
+}
+
+.transaction-view-more:hover {
+    background: #4f46e5;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.transaction-view-more .material-icons {
+    font-size: 1.1rem;
+}
+
+/* Dark mode enhancements */
+[data-theme="dark"] .transaction-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .section-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .view-all {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .view-all:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .transaction-info {
@@ -205,6 +399,7 @@
     align-items: center;
     gap: 1.5rem;
     flex: 1;
+    min-width: 0;
 }
 
 .transaction-icon {
@@ -246,12 +441,15 @@
     align-items: center;
     gap: 1rem;
     min-width: 0;
+    flex: 1;
 }
 
 .transaction-name {
     font-weight: 500;
     font-size: 1rem;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .transaction-date {
@@ -275,7 +473,7 @@
     font-weight: 600;
     font-size: 1.1rem;
     white-space: nowrap;
-    margin-left: 1.5rem;
+    margin-left: 1rem;
 }
 
 .transaction-amount.credit {
@@ -296,18 +494,813 @@
     font-size: 3rem;
     margin-bottom: 1rem;
 }
+
+.dashboard-sections {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.section-header {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-header .material-icons {
+    font-size: 1.5rem;
+}
+
+.section-header h2 {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.section-content {
+    padding: 1.5rem;
+}
+
+/* Card Management Styles */
+.card-preview {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    color: white;
+    margin-bottom: 0;
+    aspect-ratio: 1.6/1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 100%;
+    width: 100%;
+}
+
+.card-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    border-radius: inherit;
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+}
+
+.card-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-type {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.9;
+}
+
+.card-number {
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+}
+
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.card-holder {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.card-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.card-action-btn {
+    background: var(--background-color);
+    border: none;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    color: var(--text-color);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.card-action-btn:hover {
+    background: #6366f1;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.card-limits {
+    margin-top: 1.5rem;
+}
+
+.limit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--background-color);
+}
+
+.limit-item:last-child {
+    border-bottom: none;
+}
+
+.limit-label {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.limit-value {
+    font-weight: 500;
+}
+
+/* Account Details Styles */
+.account-info {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.info-group {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--background-color);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.info-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-label {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.info-value {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.account-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    width: fit-content;
+}
+
+.account-status.premium {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.account-actions {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.account-action-btn {
+    background: var(--background-color);
+    border: none;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    color: var(--text-color);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.account-action-btn:hover {
+    background: #6366f1;
+    color: white;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 1200px) {
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .card-preview {
+        padding: 1.25rem;
+    }
+
+    .card-number {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .card-slider-container {
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
+    }
+
+    .info-group {
+        padding: 0.875rem;
+    }
+
+    .account-status {
+        padding: 0.5rem 0.875rem;
+    }
+
+    .card-slider-container {
+        max-width: 440px;
+        padding: 0 2.5rem;
+    }
+
+    .card-preview {
+        padding: 1.125rem;
+    }
+
+    .card-number {
+        font-size: 1.2rem;
+        margin: 0.75rem 0;
+    }
+
+    .card-chip {
+        margin-bottom: 0.75rem;
+    }
+
+    .transactions-section {
+        padding: 1.25rem;
+    }
+
+    .transaction-list {
+        gap: 0.875rem;
+    }
+
+    .transaction-item {
+        padding: 0.875rem;
+    }
+
+    .transaction-info {
+        gap: 1rem;
+    }
+
+    .transaction-details {
+        gap: 0.75rem;
+    }
+
+    .transaction-name {
+        font-size: 0.9375rem;
+    }
+
+    .transaction-date {
+        font-size: 0.75rem;
+    }
+
+    .transaction-amount {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .info-group {
+        padding: 0.75rem;
+    }
+
+    .info-label {
+        font-size: 0.8125rem;
+    }
+
+    .info-value {
+        font-size: 0.9375rem;
+    }
+
+    .account-status {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+
+    .card-slider-container {
+        max-width: 100%;
+        padding: 0 2rem;
+    }
+
+    .card-preview {
+        padding: 1rem;
+    }
+
+    .card-number {
+        font-size: 1.1rem;
+        margin: 0.5rem 0;
+        letter-spacing: 0.15em;
+    }
+
+    .chip-icon {
+        width: 35px;
+        height: 28px;
+    }
+
+    .card-type {
+        font-size: 0.75rem;
+    }
+
+    .card-details {
+        font-size: 0.75rem;
+    }
+
+    .slider-nav {
+        width: 36px;
+        height: 36px;
+    }
+
+    .slider-nav .material-icons {
+        font-size: 1.25rem;
+    }
+
+    .transactions-section {
+        padding: 1rem;
+    }
+
+    .transaction-list {
+        gap: 0.75rem;
+    }
+
+    .transaction-item {
+        padding: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .transaction-info {
+        width: 100%;
+        gap: 0.875rem;
+    }
+
+    .transaction-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .transaction-date {
+        padding-left: 0;
+    }
+
+    .transaction-date::before {
+        display: none;
+    }
+
+    .transaction-amount {
+        margin-left: 2.75rem;
+    }
+
+    .transaction-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .transaction-icon .material-icons {
+        font-size: 1.125rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-info {
+        gap: 1rem;
+    }
+
+    .info-grid {
+        margin-top: 0.75rem;
+        gap: 0.625rem;
+    }
+
+    .info-group {
+        padding: 0.625rem;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+    }
+
+    .info-value {
+        font-size: 0.875rem;
+    }
+
+    .account-status {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+    }
+
+    .card-slider-container {
+        padding: 0 1.5rem;
+    }
+
+    .card-preview {
+        padding: 0.875rem;
+    }
+
+    .card-number {
+        font-size: 1rem;
+        letter-spacing: 0.1em;
+    }
+
+    .chip-icon {
+        width: 30px;
+        height: 24px;
+    }
+
+    .card-chip {
+        gap: 0.375rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-details {
+        font-size: 0.7rem;
+    }
+
+    .slider-nav {
+        width: 32px;
+        height: 32px;
+    }
+
+    .slider-nav .material-icons {
+        font-size: 1.125rem;
+    }
+
+    .transactions-section {
+        padding: 0.875rem;
+    }
+
+    .transaction-list {
+        gap: 0.625rem;
+    }
+
+    .transaction-item {
+        padding: 0.625rem;
+    }
+
+    .transaction-info {
+        gap: 0.75rem;
+    }
+
+    .transaction-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .transaction-icon .material-icons {
+        font-size: 1rem;
+    }
+
+    .transaction-name {
+        font-size: 0.875rem;
+    }
+
+    .transaction-date {
+        font-size: 0.75rem;
+    }
+
+    .transaction-amount {
+        font-size: 0.9375rem;
+        margin-left: 2.5rem;
+    }
+}
+
+/* Dark mode enhancements for better contrast */
+[data-theme="dark"] .info-group {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .card-action-btn,
+[data-theme="dark"] .account-action-btn {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .transaction-item {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .limit-item {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.card-slider-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding: 0 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card-slider {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.card-slider-track {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.card-slide {
+    min-width: 100%;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+}
+
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.slider-nav:hover {
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.slider-nav.prev {
+    left: 0;
+}
+
+.slider-nav.next {
+    right: 0;
+}
+
+.slider-nav .material-icons {
+    font-size: 1.75rem;
+    color: #4f46e5;
+}
+
+.slider-nav:hover .material-icons {
+    color: #6366f1;
+}
+
+.slider-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.slider-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slider-dot.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+.card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    backdrop-filter: blur(4px);
+}
+
+@media (max-width: 1024px) {
+    .dashboard-sections {
+        grid-template-columns: 1fr;
+        max-width: 800px;
+        margin: 0 auto 2rem auto;
+    }
+
+    .section-card:first-child {
+        order: 1;
+    }
+
+    .section-card:nth-child(2) {
+        order: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-sections {
+        gap: 1rem;
+    }
+}
 {% endblock %}
 
 {% block body %}
-<div class="card balance-card">
-    <div class="card-inner">
-        <span class="material-icons">account_balance_wallet</span>
-        <div class="card-content">
-            <h3>Available Balance</h3>
-            <div class="number">$24,562.00</div>
-            <div style="display: flex; gap: 1rem; font-size: 0.9rem;">
-                <span>•••• 4589</span>
-                <span style="color: rgba(255,255,255,0.7)">Savings Account</span>
+<div class="dashboard-sections">
+    <!-- Card Management Section -->
+    <div class="section-card">
+        <div class="section-header">
+            <span class="material-icons">credit_card</span>
+            <h2>Card Management</h2>
+        </div>
+        <div class="section-content">
+            <div class="card-slider-container">
+                <div class="card-slider">
+                    <div class="card-slider-track">
+                        <!-- Debit Card -->
+                        <div class="card-slide">
+                            <div class="card-preview">
+                                <div class="card-badge">Primary</div>
+                                <div class="card-content">
+                                    <div class="card-chip">
+                                        <div class="chip-icon"></div>
+                                        <span class="card-type">Debit</span>
+                                    </div>
+                                    <div class="card-number">•••• •••• •••• 4589</div>
+                                    <div class="card-details">
+                                        <div class="card-holder">John Doe</div>
+                                        <div class="card-expiry">12/25</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Credit Card -->
+                        <div class="card-slide">
+                            <div class="card-preview" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                                <div class="card-badge">Gold</div>
+                                <div class="card-content">
+                                    <div class="card-chip">
+                                        <div class="chip-icon"></div>
+                                        <span class="card-type">Credit</span>
+                                    </div>
+                                    <div class="card-number">•••• •••• •••• 7821</div>
+                                    <div class="card-details">
+                                        <div class="card-holder">John Doe</div>
+                                        <div class="card-expiry">09/26</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Premium Card -->
+                        <div class="card-slide">
+                            <div class="card-preview" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
+                                <div class="card-badge">Premium</div>
+                                <div class="card-content">
+                                    <div class="card-chip">
+                                        <div class="chip-icon"></div>
+                                        <span class="card-type">Platinum</span>
+                                    </div>
+                                    <div class="card-number">•••• •••• •••• 9356</div>
+                                    <div class="card-details">
+                                        <div class="card-holder">John Doe</div>
+                                        <div class="card-expiry">03/27</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="slider-nav prev">
+                    <span class="material-icons">chevron_left</span>
+                </button>
+                <button class="slider-nav next">
+                    <span class="material-icons">chevron_right</span>
+                </button>
+                <div class="slider-indicators">
+                    <div class="slider-dot active"></div>
+                    <div class="slider-dot"></div>
+                    <div class="slider-dot"></div>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="card-action-btn">
+                    <span class="material-icons">lock</span>
+                    <span>Lock Card</span>
+                </button>
+                <button class="card-action-btn">
+                    <span class="material-icons">settings</span>
+                    <span>Card Settings</span>
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Account Details Section -->
+    <div class="section-card">
+        <div class="section-header">
+            <span class="material-icons">person</span>
+            <h2>Account Details</h2>
+        </div>
+        <div class="section-content">
+            <div class="account-info">
+                <div class="account-status premium">
+                    <span class="material-icons">stars</span>
+                    Premium Account
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-group">
+                        <div class="info-label">Account Holder</div>
+                        <div class="info-value">John Doe</div>
+                    </div>
+
+                    <div class="info-group">
+                        <div class="info-label">Account Number</div>
+                        <div class="info-value">******* 4589</div>
+                    </div>
+
+                    <div class="info-group">
+                        <div class="info-label">Available Balance</div>
+                        <div class="info-value">$24,562.00</div>
+                    </div>
+
+                    <div class="info-group">
+                        <div class="info-label">Account Type</div>
+                        <div class="info-value">Premium Savings</div>
+                    </div>
+
+                    <div class="info-group">
+                        <div class="info-label">Branch</div>
+                        <div class="info-value">Main Street Branch</div>
+                    </div>
+
+                    <div class="info-group">
+                        <div class="info-label">Last Login</div>
+                        <div class="info-value">Today, 2:30 PM</div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
@@ -364,7 +1357,10 @@
 
 <div class="transactions-section">
     <div class="section-header">
-        <h3>Recent Transactions</h3>
+        <h3>
+            <span class="material-icons">receipt_long</span>
+            Recent Transactions
+        </h3>
         <a href="/dashboard/transactions" class="view-all">
             View All
             <span class="material-icons" style="font-size: 1.1rem;">arrow_forward</span>
@@ -383,6 +1379,10 @@
                 </div>
             </div>
             <div class="transaction-amount debit">-$85.20</div>
+            <button class="transaction-view-more">
+                <span>Details</span>
+                <span class="material-icons">arrow_forward</span>
+            </button>
         </div>
 
         <div class="transaction-item">
@@ -396,6 +1396,10 @@
                 </div>
             </div>
             <div class="transaction-amount credit">+$4,250.00</div>
+            <button class="transaction-view-more">
+                <span>Details</span>
+                <span class="material-icons">arrow_forward</span>
+            </button>
         </div>
 
         <div class="transaction-item">
@@ -409,6 +1413,10 @@
                 </div>
             </div>
             <div class="transaction-amount debit">-$45.80</div>
+            <button class="transaction-view-more">
+                <span>Details</span>
+                <span class="material-icons">arrow_forward</span>
+            </button>
         </div>
 
         <div class="transaction-item">
@@ -422,10 +1430,114 @@
                 </div>
             </div>
             <div class="transaction-amount debit">-$65.50</div>
+            <button class="transaction-view-more">
+                <span>Details</span>
+                <span class="material-icons">arrow_forward</span>
+            </button>
+        </div>
+
+        <!-- Adding more transactions to demonstrate scroll -->
+        <div class="transaction-item">
+            <div class="transaction-info">
+                <div class="transaction-icon shopping">
+                    <span class="material-icons">shopping_bag</span>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-name">Nike Store</div>
+                    <div class="transaction-date">Feb 27, 2024</div>
+                </div>
+            </div>
+            <div class="transaction-amount debit">-$129.99</div>
+            <button class="transaction-view-more">
+                <span>Details</span>
+                <span class="material-icons">arrow_forward</span>
+            </button>
+        </div>
+
+        <div class="transaction-item">
+            <div class="transaction-info">
+                <div class="transaction-icon transport">
+                    <span class="material-icons">directions_car</span>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-name">Uber Ride</div>
+                    <div class="transaction-date">Feb 27, 2024</div>
+                </div>
+            </div>
+            <div class="transaction-amount debit">-$24.50</div>
+            <button class="transaction-view-more">
+                <span>Details</span>
+                <span class="material-icons">arrow_forward</span>
+            </button>
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block script %}{% endblock %}
+{% block script %}
+const cardSlider = {
+    currentSlide: 0,
+    track: document.querySelector('.card-slider-track'),
+    slides: document.querySelectorAll('.card-slide'),
+    dots: document.querySelectorAll('.slider-dot'),
+    prevBtn: document.querySelector('.slider-nav.prev'),
+    nextBtn: document.querySelector('.slider-nav.next'),
+
+    init() {
+        this.updateSliderTrack();
+        this.prevBtn.addEventListener('click', () => this.navigate('prev'));
+        this.nextBtn.addEventListener('click', () => this.navigate('next'));
+
+        this.dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => this.goToSlide(index));
+        });
+
+        // Touch events
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        this.track.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        this.track.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].clientX;
+            if (touchStartX - touchEndX > 50) {
+                this.navigate('next');
+            } else if (touchEndX - touchStartX > 50) {
+                this.navigate('prev');
+            }
+        });
+    },
+
+    updateSliderTrack() {
+        this.track.style.transform = `translateX(-${this.currentSlide * 100}%)`;
+
+        this.dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === this.currentSlide);
+        });
+
+        // Update button states
+        this.prevBtn.style.opacity = this.currentSlide === 0 ? '0.5' : '1';
+        this.nextBtn.style.opacity = this.currentSlide === this.slides.length - 1 ? '0.5' : '1';
+    },
+
+    navigate(direction) {
+        if (direction === 'prev' && this.currentSlide > 0) {
+            this.currentSlide--;
+        } else if (direction === 'next' && this.currentSlide < this.slides.length - 1) {
+            this.currentSlide++;
+        }
+        this.updateSliderTrack();
+    },
+
+    goToSlide(index) {
+        this.currentSlide = index;
+        this.updateSliderTrack();
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    cardSlider.init();
 });
+{% endblock %}
