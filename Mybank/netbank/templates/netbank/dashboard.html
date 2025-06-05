@@ -111,6 +111,7 @@
 .card-number {
     font-size: 1.4rem;
     letter-spacing: 0.2em;
+    margin-top: 25%;
     margin-bottom: 1.5rem;
 }
 
@@ -726,7 +727,8 @@
 
     .card-number {
         font-size: 1.2rem;
-        margin: 0.75rem 0;
+        margin-top:25%;
+        margin-bottom: 0.75rem;
     }
 
     .card-chip {
@@ -818,7 +820,8 @@
 
     .card-number {
         font-size: 1.1rem;
-        margin: 0.5rem 0;
+        margin-top:25%;
+        margin-bottom: 0.5rem;
         letter-spacing: 0.15em;
     }
 
@@ -1035,6 +1038,7 @@
                                         <div class="card-holder">John Doe</div>
                                         <div class="card-expiry">12/25</div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -1052,6 +1056,7 @@
                                         <div class="card-holder">John Doe</div>
                                         <div class="card-expiry">09/26</div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -1112,38 +1117,38 @@
             <div class="account-info">
                 <div class="account-status premium">
                     <span class="material-icons">stars</span>
-                    Premium Account
+                    {{user.account_type|title}} Account
                 </div>
 
                 <div class="info-grid">
                     <div class="info-group">
                         <div class="info-label">Account Holder</div>
-                        <div class="info-value">John Doe</div>
+                        <div class="info-value">{{user.first_name|title}} {{user.last_name|title}}</div>
                     </div>
 
                     <div class="info-group">
                         <div class="info-label">Account Number</div>
-                        <div class="info-value">******* 4589</div>
+                        <div class="info-value">{{user.account_number}}</div>
                     </div>
 
                     <div class="info-group">
-                        <div class="info-label">Available Balance</div>
-                        <div class="info-value">$24,562.00</div>
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{user.email}}</div>
                     </div>
 
                     <div class="info-group">
-                        <div class="info-label">Account Type</div>
-                        <div class="info-value">Premium Savings</div>
+                        <div class="info-label">Phone No</div>
+                        <div class="info-value">{{user.phone_number}}</div>
                     </div>
 
                     <div class="info-group">
-                        <div class="info-label">Branch</div>
-                        <div class="info-value">Main Street Branch</div>
+                        <div class="info-label">CNIC</div>
+                        <div class="info-value">{{user.cnic}}</div>
                     </div>
 
                     <div class="info-group">
-                        <div class="info-label">Last Login</div>
-                        <div class="info-value">Today, 2:30 PM</div>
+                        <div class="info-label">Status</div>
+                        <div class="info-value">{{user.status|title}}</div>
                     </div>
                 </div>
 
@@ -1155,12 +1160,12 @@
 
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="stat-icon purple">
+        <div class="stat-icon green">
             <span class="material-icons">attach_money</span>
         </div>
         <div class="stat-info">
-            <h4>Monthly Income</h4>
-            <div class="amount">$8,350.00</div>
+            <h4>Balance</h4>
+            <div class="amount">${{user.balance}}</div>
         </div>
     </div>
     <div class="stat-card">
@@ -1169,7 +1174,7 @@
         </div>
         <div class="stat-info">
             <h4>Monthly Expenses</h4>
-            <div class="amount">$4,220.00</div>
+            <div class="amount">${{month_exp}}</div>
         </div>
     </div>
     <div class="stat-card">
@@ -1178,28 +1183,29 @@
         </div>
         <div class="stat-info">
             <h4>Monthly Income</h4>
-            <div class="amount">$8,350.00</div>
+            <div class="amount">${{month_inc}}</div>
         </div>
     </div>
 </div>
 
 <div class="quick-actions">
-    <button class="quick-action-btn">
+    <a href="transfer/" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">swap_horiz</span>
         <span>Transfer</span>
-    </button>
-    <button class="quick-action-btn">
+    </a>
+    <a href="#" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">payments</span>
         <span>Pay Bills</span>
-    </button>
-    <button class="quick-action-btn">
+    </a>
+
+    <a href="#" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">credit_card</span>
         <span>Cards</span>
-    </button>
-    <button class="quick-action-btn">
+    </a>
+    <a href="#" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">account_balance</span>
         <span>Loans</span>
-    </button>
+    </a>
 </div>
 
 <div class="transactions-section">

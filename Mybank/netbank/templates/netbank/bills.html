@@ -1,0 +1,516 @@
+{% extends 'netbank/basic.html' %}
+
+{% block title %}Bill Payment - Banking Portal{% endblock %}
+
+{% block style %}
+.bill-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.bill-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.bill-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.bill-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.bill-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+}
+
+.categories-card {
+    background: var(--card-background);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    height: fit-content;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.category-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.category-item:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.category-item.active {
+    background: #6366f1;
+    color: white;
+}
+
+.category-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.category-item.active .category-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.category-count {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.category-item.active .category-count {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.billers-section {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+}
+
+.billers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.biller-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.biller-card:hover {
+    transform: translateY(-2px);
+    border-color: #6366f1;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.biller-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.75rem;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.biller-name {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.biller-category {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.recent-bills {
+    margin-top: 2rem;
+}
+
+.bill-list {
+    background: var(--card-background);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.bill-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    transition: all 0.3s ease;
+}
+
+.bill-item:last-child {
+    border-bottom: none;
+}
+
+.bill-item:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.bill-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    flex-shrink: 0;
+}
+
+.bill-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.bill-title {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.bill-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.bill-amount {
+    font-weight: 600;
+    color: #ef4444;
+    margin-left: auto;
+}
+
+.bill-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.bill-status.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.bill-status.paid {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .categories-card,
+[data-theme="dark"] .biller-card,
+[data-theme="dark"] .bill-list {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .category-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .search-input {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .bill-item {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .bill-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+    .bill-layout {
+        grid-template-columns: 240px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .bill-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .categories-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .category-list {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        gap: 1rem;
+    }
+
+    .category-item {
+        min-width: 200px;
+    }
+
+    .billers-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .bill-container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+
+    .bill-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .section-title {
+        font-size: 1.125rem;
+    }
+
+    .bill-meta {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .bill-amount {
+        margin-left: 0;
+    }
+}
+{% endblock %}
+
+{% block body %}
+<div class="bill-container">
+    <div class="bill-header">
+        <h1>Pay Bills</h1>
+        <p>Select a biller or pay your recent bills</p>
+    </div>
+
+    <div class="bill-layout">
+        <div class="categories-card">
+            <div class="category-list">
+                <div class="category-item active">
+                    <div class="category-icon">
+                        <span class="material-icons">bolt</span>
+                    </div>
+                    <div class="category-info">
+                        <div class="category-name">Utilities</div>
+                        <div class="category-count">8 billers</div>
+                    </div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon">
+                        <span class="material-icons">wifi</span>
+                    </div>
+                    <div class="category-info">
+                        <div class="category-name">Internet & TV</div>
+                        <div class="category-count">6 billers</div>
+                    </div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon">
+                        <span class="material-icons">phone_iphone</span>
+                    </div>
+                    <div class="category-info">
+                        <div class="category-name">Mobile</div>
+                        <div class="category-count">4 billers</div>
+                    </div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon">
+                        <span class="material-icons">credit_card</span>
+                    </div>
+                    <div class="category-info">
+                        <div class="category-name">Credit Cards</div>
+                        <div class="category-count">5 billers</div>
+                    </div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon">
+                        <span class="material-icons">home</span>
+                    </div>
+                    <div class="category-info">
+                        <div class="category-name">Housing</div>
+                        <div class="category-count">3 billers</div>
+                    </div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon">
+                        <span class="material-icons">school</span>
+                    </div>
+                    <div class="category-info">
+                        <div class="category-name">Education</div>
+                        <div class="category-count">4 billers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="billers-section">
+            <div class="section-title">Utilities</div>
+
+            <div class="search-box">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" class="search-input" placeholder="Search for a biller...">
+            </div>
+
+            <div class="billers-grid">
+                <div class="biller-card">
+                    <div class="biller-logo">
+                        <span class="material-icons">bolt</span>
+                    </div>
+                    <div class="biller-name">City Power & Light</div>
+                    <div class="biller-category">Electricity</div>
+                </div>
+
+                <div class="biller-card">
+                    <div class="biller-logo">
+                        <span class="material-icons">water_drop</span>
+                    </div>
+                    <div class="biller-name">Metro Water</div>
+                    <div class="biller-category">Water</div>
+                </div>
+
+                <div class="biller-card">
+                    <div class="biller-logo">
+                        <span class="material-icons">local_fire_department</span>
+                    </div>
+                    <div class="biller-name">National Gas</div>
+                    <div class="biller-category">Gas</div>
+                </div>
+
+                <div class="biller-card">
+                    <div class="biller-logo">
+                        <span class="material-icons">delete</span>
+                    </div>
+                    <div class="biller-name">City Waste</div>
+                    <div class="biller-category">Waste Management</div>
+                </div>
+            </div>
+
+            <div class="recent-bills">
+                <div class="section-title">Recent Bills</div>
+                
+                <div class="bill-list">
+                    <div class="bill-item">
+                        <div class="bill-icon">
+                            <span class="material-icons">bolt</span>
+                        </div>
+                        <div class="bill-info">
+                            <div class="bill-title">City Power & Light</div>
+                            <div class="bill-meta">
+                                <span>Due: Mar 15, 2024</span>
+                                <span>Bill #: 123456</span>
+                            </div>
+                        </div>
+                        <div class="bill-amount">$145.30</div>
+                        <div class="bill-status pending">Pending</div>
+                    </div>
+
+                    <div class="bill-item">
+                        <div class="bill-icon">
+                            <span class="material-icons">wifi</span>
+                        </div>
+                        <div class="bill-info">
+                            <div class="bill-title">Fiber Internet</div>
+                            <div class="bill-meta">
+                                <span>Due: Mar 10, 2024</span>
+                                <span>Bill #: 789012</span>
+                            </div>
+                        </div>
+                        <div class="bill-amount">$79.99</div>
+                        <div class="bill-status paid">Paid</div>
+                    </div>
+
+                    <div class="bill-item">
+                        <div class="bill-icon">
+                            <span class="material-icons">water_drop</span>
+                        </div>
+                        <div class="bill-info">
+                            <div class="bill-title">Metro Water</div>
+                            <div class="bill-meta">
+                                <span>Due: Mar 20, 2024</span>
+                                <span>Bill #: 345678</span>
+                            </div>
+                        </div>
+                        <div class="bill-amount">$68.50</div>
+                        <div class="bill-status pending">Pending</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

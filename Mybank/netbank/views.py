@@ -33,11 +33,27 @@ def generate_unique_trans_id():
 def dashboard(request):
     print(request.user)
     now_user = Customer.objects.get(user = request.user)
+    month_expenses = 0
+    month_income = 0
+    incoming = Transaction.objects.filter(recipient_account = now_user.account_number)
+    outgoing = Transaction.objects.filter(account = now_user.account_number)
+
+    for tran in incoming:
+        month_income = float(month_income) + float(tran.amount)
+
+    for tran in outgoing:
+        month_expenses = float(month_expenses) + float(tran.amount)
+
 
     print('this is the customer', now_user.account_number)
-    return render(request,'netbank/dashboard.html')
+    return render(request,'netbank/dashboard.html',{'user':now_user, 'month_exp':month_expenses,'month_inc':month_income})
 
 
+
+
+
+@login_required
+@user_passes_test(not_superuser)
 def transfer(request):
     cust = Customer.objects.get(user=request.user)
     if request.method == 'POST' and 'first' in request.POST:
@@ -94,19 +110,9 @@ def transfer(request):
             return render(request,'netbank/transfer.html',{"cust":cust})
 
     elif request.method == 'POST' and 'back' in request.POST:
-        pass
-
-
+        return render(request, 'netbank/transfer.html', {"cust": cust})
 
     return render(request,'netbank/transfer.html',{"cust":cust})
-
-
-
-
-
-
-
-
 
 
 
@@ -124,6 +130,8 @@ def trans_details(request,trans_id):
 
 
 
+def bills(request):
+    return render(request,'netbank/bills.html')
 
 
 

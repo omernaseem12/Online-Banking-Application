@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.dashboard,name = 'net_dashboard'),
     path('transfer/', views.transfer,name = 'transfer'),
     path('transactions/details/<str:trans_id>', views.trans_details,name='trans_detail'),
+    path('bills/', views.bills,name='bills'),
 
 
 ]
