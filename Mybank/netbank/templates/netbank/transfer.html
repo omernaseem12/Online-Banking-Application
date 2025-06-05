@@ -1,0 +1,277 @@
+{% extends 'netbank/basic.html' %}
+
+{% block title %}Transfer - Step 1 - Banking Portal{% endblock %}
+
+{% block style %}
+.transfer-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.transfer-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.transfer-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.transfer-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    gap: 4rem;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.step-number {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.step.active .step-number {
+    background: #6366f1;
+    color: white;
+}
+
+.step-label {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.step.active .step-label {
+    color: #6366f1;
+    font-weight: 500;
+}
+
+.transfer-card {
+    background: var(--card-background);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.form-group {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
+}
+
+.proceed-button {
+    width: 100%;
+    padding: 1rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.proceed-button:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+}
+
+.proceed-button:active {
+    transform: translateY(0);
+}
+
+.proceed-button .material-icons {
+    font-size: 1.25rem;
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .transfer-card {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .form-input {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+    .transfer-container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+
+    .transfer-card {
+        padding: 1.5rem;
+    }
+
+    .transfer-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .step-indicator {
+        gap: 2rem;
+    }
+
+    .step-number {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.875rem;
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+    }
+}
+{% endblock %}
+
+{% block body %}
+
+{%if messages %}
+<script>
+    {% for msg in messages %}
+    {% if msg.message == 'notfound' %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "No Recipient Found",
+    });
+    {% elif msg.message == 'error' %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "An Unexpected Error Occurred",
+    });
+    {% elif msg.message == 'blocked' %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Your Account is Blocked By The Bank",
+    });
+    {% endif %}
+    {% endfor %}
+</script>
+{%endif%}
+
+
+
+<div class="transfer-container">
+    <div class="transfer-header">
+        <h1>Transfer Money</h1>
+        <p>Select accounts to start your transfer</p>
+    </div>
+
+    <div class="step-indicator">
+        <div class="step active">
+            <div class="step-number">1</div>
+            <div class="step-label">Accounts</div>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-label">Amount</div>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-label">Confirm</div>
+        </div>
+    </div>
+
+    <div class="transfer-card">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">From Account</label>
+                <select name="from_account" class="form-input form-select" required>
+                    <option value="">Select your account</option>
+                    <option value="{{cust.account_number}}">{{cust.account_type|title}} - {{cust.account_number}} - ${{cust.balance}}</option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Recipient's Bank</label>
+                <select name="recipient_bank" class="form-input form-select" required>
+                    <option value="">Select recipient's bank</option>
+                    <option value="chase">Chase Bank</option>
+                    <option value="bofa">Bank of America</option>
+                    <option value="wells">Wells Fargo</option>
+                    <option value="citi">Citibank</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Recipient's Account Number</label>
+                <input type="text" name="recipient_account" class="form-input" placeholder="Enter account number" >
+            </div>
+
+            <button type="submit" name="first" class="proceed-button">
+                <span>Proceed to Amount</span>
+                <span class="material-icons">arrow_forward</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

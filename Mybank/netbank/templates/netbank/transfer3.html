@@ -1,0 +1,363 @@
+{% extends 'netbank/basic.html' %}
+
+{% block title %}Transfer - Confirmation - Banking Portal{% endblock %}
+
+{% block style %}
+/* Reuse styles from previous steps */
+.transfer-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.transfer-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.transfer-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.transfer-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    gap: 4rem;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.step-number {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.step.active .step-number {
+    background: #6366f1;
+    color: white;
+}
+
+.step-label {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.step.active .step-label {
+    color: #6366f1;
+    font-weight: 500;
+}
+
+.transfer-card {
+    background: var(--card-background);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.confirmation-details {
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.detail-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.detail-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.section-title {
+    color: #6366f1;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.detail-label {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.amount-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #6366f1;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.back-button {
+    padding: 1rem;
+    background: transparent;
+    color: #6366f1;
+    border: 1px solid #6366f1;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.back-button:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.confirm-button {
+    padding: 1rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.confirm-button:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+}
+
+.confirm-button:active {
+    transform: translateY(0);
+}
+
+.notice {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-top: 1.5rem;
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .transfer-card {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .confirmation-details {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .detail-section {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+    .transfer-container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+
+    .transfer-card {
+        padding: 1.5rem;
+    }
+
+    .transfer-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .step-indicator {
+        gap: 2rem;
+    }
+
+    .step-number {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.875rem;
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+    }
+
+    .amount-value {
+        font-size: 1.25rem;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .confirmation-details {
+        padding: 1.25rem;
+    }
+}
+{% endblock %}
+
+{% block body %}
+
+{%if messages %}
+<script>
+    {% for msg in messages %}
+    {% if msg.message == 'success' %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Low Funds: Entered Amount is Greater Than Available Balance",
+    });
+    {% else %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Low Funds: Entered Amount is Greater Than Available Balance",
+    });
+    {% endif %}
+    {% endfor %}
+</script>
+{%endif%}
+
+
+<div class="transfer-container">
+    <div class="transfer-header">
+        <h1>Confirm Transfer</h1>
+        <p>Please review your transfer details</p>
+    </div>
+
+    <div class="step-indicator">
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-label">Accounts</div>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-label">Amount</div>
+        </div>
+        <div class="step active">
+            <div class="step-number">3</div>
+            <div class="step-label">Confirm</div>
+        </div>
+    </div>
+
+    <div class="transfer-card">
+        <div class="confirmation-details">
+            <div class="amount-value">${{amount}}</div>
+            
+            <div class="detail-section">
+                <div class="section-title">From</div>
+                <div class="detail-row">
+                    <span class="detail-label">Account</span>
+                    <span class="detail-value">{{cust.account_type|title}} Account - {{cust.account_number}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Account Title</span>
+                    <span class="detail-value">{{cust.first_name}} {{cust.last_name}}</span>
+                </div><div class="detail-row">
+                    <span class="detail-label">Available Balance</span>
+                    <span class="detail-value">${{cust.balance}}</span>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="section-title">To</div>
+                <div class="detail-row">
+                    <span class="detail-label">Bank</span>
+                    <span class="detail-value">{{bank}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Account Title</span>
+                    <span class="detail-value">{{rec_cust.first_name}} {{rec_cust.last_name}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Account Number</span>
+                    <span class="detail-value">{{rec_cust.account_number}}</span>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="section-title">Details</div>
+                <div class="detail-row">
+                    <span class="detail-label">Transfer Fee</span>
+                    <span class="detail-value">${{fees}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Total Amount</span>
+                    <span class="detail-value">${{total}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Description</span>
+                    <span class="detail-value">{{description}}</span>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="amount" value="{{ amount }}">
+            <input type="hidden" name="total" value="{{ total }}">
+            <input type="hidden" name="description" value="{{ description }}">
+            <input type="hidden" name="to_account" value="{{ rec_cust.account_number }}">
+            <div class="button-group">
+                <button type="button" name="back" class="back-button">
+                    <span class="material-icons">arrow_back</span>
+                    <span>Edit Details</span>
+                </button>
+                <button type="submit" name="confirm" class="confirm-button">
+                    <span class="material-icons">check_circle</span>
+                    <span>Confirm Transfer</span>
+                </button>
+            </div>
+        </form>
+
+        <p class="notice">By confirming, you agree to the transfer terms and conditions</p>
+    </div>
+</div>
+{% endblock %} 

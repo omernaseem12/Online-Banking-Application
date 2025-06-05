@@ -27,6 +27,9 @@ def login_view(request):
                 print('hello yes')
                 login(request,user)
                 return redirect('dashboard')
+            else:
+                login(request, user)
+                return redirect('net_dashboard')
         else:
             print('hello NOoo')
             messages.error(request, "Invalid")
