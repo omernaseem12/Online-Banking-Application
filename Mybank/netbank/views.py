@@ -33,6 +33,8 @@ def generate_unique_trans_id():
 def dashboard(request):
     print(request.user)
     now_user = Customer.objects.get(user = request.user)
+    cards = Card.objects.filter(account = now_user.account_number)
+    cardlen = len(cards)
     month_expenses = 0
     month_income = 0
     incoming = Transaction.objects.filter(recipient_account = now_user.account_number)
@@ -46,7 +48,8 @@ def dashboard(request):
 
 
     print('this is the customer', now_user.account_number)
-    return render(request,'netbank/dashboard.html',{'user':now_user, 'month_exp':month_expenses,'month_inc':month_income})
+    return render(request,'netbank/dashboard.html',{'user':now_user, 'month_exp':month_expenses,
+                                                    'month_inc':month_income, 'cards':cards,'cardslen':cardlen})
 
 
 

@@ -112,7 +112,7 @@
     font-size: 1.4rem;
     letter-spacing: 0.2em;
     margin-top: 25%;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
 }
 
 .card-details {
@@ -728,7 +728,7 @@
     .card-number {
         font-size: 1.2rem;
         margin-top:25%;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.55rem;
     }
 
     .card-chip {
@@ -821,7 +821,7 @@
     .card-number {
         font-size: 1.1rem;
         margin-top:25%;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
         letter-spacing: 0.15em;
     }
 
@@ -1020,23 +1020,87 @@
             <span class="material-icons">credit_card</span>
             <h2>Card Management</h2>
         </div>
+        {% if cardslen != 0 %}
         <div class="section-content">
+            <div class="card-slider-container">
+                <div class="card-slider">
+                    <div class="card-slider-track">
+                        <!-- Debit Card -->
+                        {% for card in cards %}
+                        <div class="card-slide">
+                            <div class="card-preview" style="{% if card.card_type == 'gold' %}background: linear-gradient(135deg, #f59e0b, #d97706);{% elif card.card_type == 'platinum' %} background: linear-gradient(135deg, #1e293b, #0f172a); {%endif%}">
+                                <div class="card-badge">{% if card.card_type == 'classic' %} Standard {% elif card.card_type == 'gold' %} Gold {% else %} Premium {%endif%}</div>
+                                <div class="card-content">
+                                    <div class="card-chip">
+                                        <div class="chip-icon"></div>
+                                        <span class="card-type">{{card.card_type}}</span>
+                                    </div>
+                                    <div class="card-number">{{card.card_number}}</div>
+                                    <div class="card-details">
+                                        <div class="card-holder">EXP {{ card.expiration_date|date:"m/y" }}
+                                        </div>
+                                        <div class="card-expiry">CVV {{card.cvv}}</div>
+                                    </div>
+                                    <div class="card-details" style="margin-top:10px;">
+                                        <div class="card-holder">{{user.first_name|title}} {{user.last_name|title}}</div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- Credit Card -->
+
+                        <!-- Premium Card -->
+
+                    </div>
+                </div>
+                <button class="slider-nav prev">
+                    <span class="material-icons">chevron_left</span>
+                </button>
+                <button class="slider-nav next">
+                    <span class="material-icons">chevron_right</span>
+                </button>
+                <div class="slider-indicators">
+                    <div class="slider-dot active"></div>
+                    <div class="slider-dot"></div>
+                    <div class="slider-dot"></div>
+                </div>
+            </div>
+            <div class="card-actions">
+
+                <a href="#" style="text-decoration: none;" class="card-action-btn">
+                    <span class="material-icons">lock_open</span>
+                    <span>Change Card Status</span>
+                </a>
+                <a href="#" style="text-decoration: none;" class="card-action-btn">
+                    <span class="material-icons">settings</span>
+                    <span>Card Settings</span>
+                </a>
+            </div>
+            {% else %}
+            <div class="section-content">
             <div class="card-slider-container">
                 <div class="card-slider">
                     <div class="card-slider-track">
                         <!-- Debit Card -->
                         <div class="card-slide">
                             <div class="card-preview">
-                                <div class="card-badge">Primary</div>
+                                <div class="card-badge">Standard</div>
                                 <div class="card-content">
                                     <div class="card-chip">
                                         <div class="chip-icon"></div>
-                                        <span class="card-type">Debit</span>
+                                        <span class="card-type">Classic</span>
                                     </div>
-                                    <div class="card-number">•••• •••• •••• 4589</div>
+                                    <div class="card-number">•••• •••• •••• 1234</div>
                                     <div class="card-details">
-                                        <div class="card-holder">John Doe</div>
-                                        <div class="card-expiry">12/25</div>
+                                        <div class="card-holder" style="font-size:20px; font-weight:800;">Apply Now</div>
+                                        <div class="card-expiry">CVV ***</div>
+                                    </div>
+                                    <div class="card-details" style="margin-top:10px;">
+                                        <div class="card-holder">{{user.first_name|title}} {{user.last_name|title}}</div>
+
                                     </div>
 
                                 </div>
@@ -1049,12 +1113,16 @@
                                 <div class="card-content">
                                     <div class="card-chip">
                                         <div class="chip-icon"></div>
-                                        <span class="card-type">Credit</span>
+                                        <span class="card-type">Cold</span>
                                     </div>
-                                    <div class="card-number">•••• •••• •••• 7821</div>
+                                    <div class="card-number">•••• •••• •••• 1234</div>
                                     <div class="card-details">
-                                        <div class="card-holder">John Doe</div>
-                                        <div class="card-expiry">09/26</div>
+                                        <div class="card-holder" style="font-size:20px; font-weight:800;">Apply Now</div>
+                                        <div class="card-expiry">CVV ***</div>
+                                    </div>
+                                    <div class="card-details" style="margin-top:10px;">
+                                        <div class="card-holder">{{user.first_name|title}} {{user.last_name|title}}</div>
+
                                     </div>
 
                                 </div>
@@ -1069,10 +1137,14 @@
                                         <div class="chip-icon"></div>
                                         <span class="card-type">Platinum</span>
                                     </div>
-                                    <div class="card-number">•••• •••• •••• 9356</div>
+                                    <div class="card-number">•••• •••• •••• 1234</div>
                                     <div class="card-details">
-                                        <div class="card-holder">John Doe</div>
-                                        <div class="card-expiry">03/27</div>
+                                        <div class="card-holder" style="font-size:20px; font-weight:800;">Apply Now</div>
+                                        <div class="card-expiry">CVV ***</div>
+                                    </div>
+                                    <div class="card-details" style="margin-top:10px;">
+                                        <div class="card-holder">{{user.first_name|title}} {{user.last_name|title}}</div>
+
                                     </div>
                                 </div>
                             </div>
@@ -1091,17 +1163,18 @@
                     <div class="slider-dot"></div>
                 </div>
             </div>
-
-            <div class="card-actions">
-                <button class="card-action-btn">
-                    <span class="material-icons">lock</span>
-                    <span>Lock Card</span>
-                </button>
-                <button class="card-action-btn">
-                    <span class="material-icons">settings</span>
-                    <span>Card Settings</span>
-                </button>
+                <div class="card-actions">
+                <a href="#" style="text-decoration: none;" class="card-action-btn">
+                    <span class="material-icons">done</span>
+                    <span style="font-size:18px;">Apply Now</span>
+                </a>
+                <a href="#" style="text-decoration: none;" class="card-action-btn">
+                    <span class="material-icons">support_agent</span>
+                    <span>Support</span>
+                </a>
             </div>
+            {% endif %}
+
 
 
         </div>
@@ -1195,7 +1268,7 @@
     </a>
     <a href="#" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">payments</span>
-        <span>Pay Bills</span>
+        <span>Transactions</span>
     </a>
 
     <a href="#" style="text-decoration: none;" class="quick-action-btn" >
@@ -1203,8 +1276,8 @@
         <span>Cards</span>
     </a>
     <a href="#" style="text-decoration: none;" class="quick-action-btn" >
-        <span class="material-icons">account_balance</span>
-        <span>Loans</span>
+        <span class="material-icons">person</span>
+        <span>User Info</span>
     </a>
 </div>
 
