@@ -1026,7 +1026,6 @@
                 <div class="card-slider">
                     <div class="card-slider-track">
                         <!-- Debit Card -->
-                        {% for card in cards %}
                         <div class="card-slide">
                             <div class="card-preview" style="{% if card.card_type == 'gold' %}background: linear-gradient(135deg, #f59e0b, #d97706);{% elif card.card_type == 'platinum' %} background: linear-gradient(135deg, #1e293b, #0f172a); {%endif%}">
                                 <div class="card-badge">{% if card.card_type == 'classic' %} Standard {% elif card.card_type == 'gold' %} Gold {% else %} Premium {%endif%}</div>
@@ -1049,32 +1048,26 @@
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
                         <!-- Credit Card -->
 
                         <!-- Premium Card -->
 
                     </div>
                 </div>
-                <button class="slider-nav prev">
-                    <span class="material-icons">chevron_left</span>
-                </button>
-                <button class="slider-nav next">
-                    <span class="material-icons">chevron_right</span>
-                </button>
-                <div class="slider-indicators">
-                    <div class="slider-dot active"></div>
-                    <div class="slider-dot"></div>
-                    <div class="slider-dot"></div>
-                </div>
             </div>
             <div class="card-actions">
-
-                <a href="#" style="text-decoration: none;" class="card-action-btn">
-                    <span class="material-icons">lock_open</span>
-                    <span>Change Card Status</span>
+                {% if card.status == 'active' %}
+                <a href="card_management/show_more/block/" style="text-decoration: none; " class="card-action-btn">
+                    <span class="material-icons" style="color:red;">lock</span>
+                    <span style="" >Block card</span>
                 </a>
-                <a href="#" style="text-decoration: none;" class="card-action-btn">
+                {% else %}
+                <a href="card_management/show_more/active/" style="text-decoration: none;" class="card-action-btn">
+                    <span class="material-icons" style="color:green;">lock_open</span>
+                    <span>Unblock Card</span>
+                </a>
+                {%endif%}
+                <a href="card_management/show_more/" style="text-decoration: none; " class="card-action-btn">
                     <span class="material-icons">settings</span>
                     <span>Card Settings</span>
                 </a>
@@ -1266,14 +1259,14 @@
         <span class="material-icons">swap_horiz</span>
         <span>Transfer</span>
     </a>
-    <a href="#" style="text-decoration: none;" class="quick-action-btn" >
+    <a href="transactions/" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">payments</span>
         <span>Transactions</span>
     </a>
 
-    <a href="#" style="text-decoration: none;" class="quick-action-btn" >
+    <a href="card_management/show_more/" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">credit_card</span>
-        <span>Cards</span>
+        <span>Card Management</span>
     </a>
     <a href="#" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">person</span>
@@ -1287,115 +1280,44 @@
             <span class="material-icons">receipt_long</span>
             Recent Transactions
         </h3>
-        <a href="/dashboard/transactions" class="view-all">
+        <a href="transactions/" class="view-all">
             View All
             <span class="material-icons" style="font-size: 1.1rem;">arrow_forward</span>
         </a>
     </div>
 
-    <div class="transaction-list">
-        <div class="transaction-item">
-            <div class="transaction-info">
-                <div class="transaction-icon shopping">
-                    <span class="material-icons">shopping_cart</span>
-                </div>
-                <div class="transaction-details">
-                    <div class="transaction-name">Amazon Shopping</div>
-                    <div class="transaction-date">Today, 2:30 PM</div>
-                </div>
-            </div>
-            <div class="transaction-amount debit">-$85.20</div>
-            <button class="transaction-view-more">
-                <span>Details</span>
-                <span class="material-icons">arrow_forward</span>
-            </button>
-        </div>
+        <div class="transaction-list">
+            {% for trans in transactions %}
+            <div class="transaction-item">
+                <div class="transaction-info">
+                    {% if trans.account == acc %}
+                    <div class="stat-icon red">
+                            <span class="material-icons">arrow_downward</span>
+                        </div>
+                    {% else %}
+                    <div class="stat-icon green">
+                            <span class="material-icons">arrow_upward</span>
+                        </div>
 
-        <div class="transaction-item">
-            <div class="transaction-info">
-                <div class="transaction-icon salary">
-                    <span class="material-icons">work</span>
+                    {% endif %}
+                    <div class="transaction-details">
+                        <div class="transaction-name">{{trans.name|title}}</div>
+                        <div class="transaction-date">{{trans.date}}</div>
+                    </div>
                 </div>
-                <div class="transaction-details">
-                    <div class="transaction-name">Salary Deposit</div>
-                    <div class="transaction-date">Mar 1, 2024</div>
-                </div>
+                    {% if trans.account == acc %}
+                        <div class="transaction-amount debit">-${{trans.amount}}</div>
+                    {% else %}
+                        <div class="transaction-amount credit">+${{trans.amount}}</div>
+                    {% endif %}
+                <a href="transactions/details/{{trans.trans_id}}" class="transaction-view-more" style="text-decoration: none;">
+                    <span>Details</span>
+                    <span class="material-icons">arrow_forward</span>
+                </a>
             </div>
-            <div class="transaction-amount credit">+$4,250.00</div>
-            <button class="transaction-view-more">
-                <span>Details</span>
-                <span class="material-icons">arrow_forward</span>
-            </button>
-        </div>
+            {% endfor %}
 
-        <div class="transaction-item">
-            <div class="transaction-info">
-                <div class="transaction-icon transport">
-                    <span class="material-icons">local_gas_station</span>
-                </div>
-                <div class="transaction-details">
-                    <div class="transaction-name">Shell Gas Station</div>
-                    <div class="transaction-date">Feb 29, 2024</div>
-                </div>
-            </div>
-            <div class="transaction-amount debit">-$45.80</div>
-            <button class="transaction-view-more">
-                <span>Details</span>
-                <span class="material-icons">arrow_forward</span>
-            </button>
-        </div>
 
-        <div class="transaction-item">
-            <div class="transaction-info">
-                <div class="transaction-icon food">
-                    <span class="material-icons">restaurant</span>
-                </div>
-                <div class="transaction-details">
-                    <div class="transaction-name">Cheesecake Factory</div>
-                    <div class="transaction-date">Feb 28, 2024</div>
-                </div>
-            </div>
-            <div class="transaction-amount debit">-$65.50</div>
-            <button class="transaction-view-more">
-                <span>Details</span>
-                <span class="material-icons">arrow_forward</span>
-            </button>
-        </div>
-
-        <!-- Adding more transactions to demonstrate scroll -->
-        <div class="transaction-item">
-            <div class="transaction-info">
-                <div class="transaction-icon shopping">
-                    <span class="material-icons">shopping_bag</span>
-                </div>
-                <div class="transaction-details">
-                    <div class="transaction-name">Nike Store</div>
-                    <div class="transaction-date">Feb 27, 2024</div>
-                </div>
-            </div>
-            <div class="transaction-amount debit">-$129.99</div>
-            <button class="transaction-view-more">
-                <span>Details</span>
-                <span class="material-icons">arrow_forward</span>
-            </button>
-        </div>
-
-        <div class="transaction-item">
-            <div class="transaction-info">
-                <div class="transaction-icon transport">
-                    <span class="material-icons">directions_car</span>
-                </div>
-                <div class="transaction-details">
-                    <div class="transaction-name">Uber Ride</div>
-                    <div class="transaction-date">Feb 27, 2024</div>
-                </div>
-            </div>
-            <div class="transaction-amount debit">-$24.50</div>
-            <button class="transaction-view-more">
-                <span>Details</span>
-                <span class="material-icons">arrow_forward</span>
-            </button>
-        </div>
     </div>
 </div>
 {% endblock %}

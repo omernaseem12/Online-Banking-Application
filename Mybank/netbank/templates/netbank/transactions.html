@@ -1,0 +1,422 @@
+{% extends "netbank/basic.html" %}
+
+{% block title %}Transaction History - Banking Admin{% endblock %}
+
+{% block style %}
+.search-container {
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h2 {
+    font-size: 1.75rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.page-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.search-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.search-filters {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: var(--background-color);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.search-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-secondary {
+    background: var(--primary-color);
+    color: var(--text-color);
+    border: 1px solid #e2e8f0;
+}
+
+.btn-secondary-re {
+    background: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid #e2e8f0;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary-re:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.results-card {
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.transactions-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.transactions-table th,
+.transactions-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.transactions-table th {
+    background: var(--background-color);
+    font-weight: 600;
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+.transactions-table tr:hover {
+    background: var(--background-color);
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.status-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-pending {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.status-failed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.amount-positive {
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.amount-negative {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .search-container {
+        padding: 1rem;
+    }
+
+    .search-filters {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .search-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .search-actions {
+        justify-content: stretch;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    /* Convert table to cards for mobile */
+    .transactions-table {
+        display: block;
+    }
+
+    .transactions-table thead {
+        display: none;
+    }
+
+    .transactions-table tbody {
+        display: block;
+    }
+
+    .transactions-table tr {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+    }
+
+    .transactions-table td {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: center;
+        padding: 0.5rem;
+        border: none;
+        font-size: 0.95rem;
+    }
+
+    .transactions-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .transactions-table td:last-child {
+        grid-template-columns: 1fr;
+        justify-items: end;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-card,
+    .results-card {
+        padding: 1rem;
+        border-radius: 0.75rem;
+    }
+
+    .form-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+}
+
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon.purple {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.stat-icon.green {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.stat-icon.red {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+{% endblock %}
+
+{% block body %}
+
+{%if messages %}
+<script>
+    {% for msg in messages %}
+    {% if msg.message == 'notfound' %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Failed: No Transaction Found",
+    });
+    {% elif msg.message == 'dateerror' %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Date Error",
+    });
+    {% endif %}
+    {% endfor %}
+</script>
+{%endif%}
+
+<div class="search-container">
+    <div class="page-header">
+        <h2>Transaction History</h2>
+        <p>Search and view transaction details</p>
+    </div>
+
+    <div class="search-card">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="search-filters">
+
+                <div class="form-group">
+                    <label class="form-label" for="datefrom">Date From</label>
+                    <input type="date" class="form-input" id="datefrom" name="datefrom">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="dateto">Date To</label>
+                    <input type="date" class="form-input" id="dateto" name="dateto">
+                </div>
+
+            </div>
+
+            <div class="search-actions">
+                <button type="reset" class="btn btn-secondary-re">
+                    <span class="material-icons">refresh</span>
+                    Reset
+                </button>
+                <button type="submit" name="filter_search" class="btn btn-primary">
+                    <span class="material-icons">search</span>
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="results-card">
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Mode</th>
+                    <th>Date & Time</th>
+                    <th>Type</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for trans in transactions %}
+                <tr>
+                    <td data-label="Transaction ID">#{{trans.trans_id}}</td>
+
+                    {% if trans.account == acc %}
+                    <td ><div class="stat-icon red">
+                            <span class="material-icons">arrow_downward</span>
+                        </div>
+                    </td>
+                    {% else %}
+                    <td ><div class="stat-icon green">
+                            <span class="material-icons">arrow_upward</span>
+                        </div>
+                    </td>
+                    {% endif %}
+
+                    <td data-label="Date & Time">{{trans.date}}</td>
+                    <td data-label="Type">{{trans.type|title}}</td>
+                    <td data-label="Type">{{trans.method|title}}</td>
+
+                    {% if trans.account == acc %}
+                    <td data-label="Amount" class="amount-negative">-{{trans.amount}}</td>
+                    {% else %}
+                    <td data-label="Amount" class="amount-positive">+{{trans.amount}}</td>
+                    {% endif %}
+
+
+                    {% if trans.status %}
+                    <td data-label="Status"><span class="status-badge status-success">Success</span></td>
+                    {% else %}
+                    <td data-label="Status"><span class="status-badge status-pending">Pending</span></td>
+                    {% endif %}
+                    <td data-label="Actions">
+                            <a href="/netbank/transactions/details/{{trans.trans_id}}" class="material-icons btn btn-secondary" style="text-decoration: none; color:var(--text-color);" >visibility</a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

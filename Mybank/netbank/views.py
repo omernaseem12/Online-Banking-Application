@@ -30,11 +30,11 @@ def generate_unique_trans_id():
 
 @login_required
 @user_passes_test(not_superuser)
-def dashboard(request):
+def net_dashboard(request):
     print(request.user)
     now_user = Customer.objects.get(user = request.user)
-    cards = Card.objects.filter(account = now_user.account_number)
-    cardlen = len(cards)
+    card = Card.objects.get(account = now_user.account_number)
+
     month_expenses = 0
     month_income = 0
     incoming = Transaction.objects.filter(recipient_account = now_user.account_number)
@@ -46,10 +46,28 @@ def dashboard(request):
     for tran in outgoing:
         month_expenses = float(month_expenses) + float(tran.amount)
 
+    cust = Customer.objects.get(user=request.user)
+    acc = cust.account_number
+    incoming = list(Transaction.objects.filter(recipient_account=cust.account_number))
+    outgoing = list(Transaction.objects.filter(account=cust.account_number))
+    transactions = incoming + outgoing
+    transactions.sort(key=lambda x: x.id, reverse=True)
+    transactions = transactions[:10]
+    for tran in transactions:
+        if tran.account == cust.account_number:
+            rec_acc = tran.recipient_account
+            rec_cust = Customer.objects.get(account_number = rec_acc)
+            name = f'{rec_cust.first_name} {rec_cust.last_name}'
+            tran.name = name
+        else:
+            sender_cust = Customer.objects.get(account_number=tran.account)
+            name = f'{sender_cust.first_name} {sender_cust.last_name}'
+            tran.name = name
+
 
     print('this is the customer', now_user.account_number)
-    return render(request,'netbank/dashboard.html',{'user':now_user, 'month_exp':month_expenses,
-                                                    'month_inc':month_income, 'cards':cards,'cardslen':cardlen})
+    return render(request,'netbank/dashboard.html',{'acc':acc,'user':now_user, 'month_exp':month_expenses,
+                                                    'month_inc':month_income, 'card':card,'transactions':transactions})
 
 
 
@@ -57,7 +75,7 @@ def dashboard(request):
 
 @login_required
 @user_passes_test(not_superuser)
-def transfer(request):
+def net_transfer(request):
     cust = Customer.objects.get(user=request.user)
     if request.method == 'POST' and 'first' in request.POST:
         account = request.POST.get('from_account')
@@ -121,7 +139,7 @@ def transfer(request):
 
 @login_required
 @user_passes_test(not_superuser)
-def trans_details(request,trans_id):
+def net_trans_details(request,trans_id):
     transaction = Transaction.objects.get(trans_id = trans_id)
     sender_acc = transaction.account
     receiver_acc = transaction.recipient_account
@@ -132,10 +150,122 @@ def trans_details(request,trans_id):
     return render(request, 'netbank/trans_details.html',dic)
 
 
+@login_required
+@user_passes_test(not_superuser)
+def test(request):
+    return render(request,'netbank/test.html')
 
-def bills(request):
-    return render(request,'netbank/bills.html')
+
+@login_required
+@user_passes_test(not_superuser)
+def user_block_card(request):
+    cust = Customer.objects.get(user=request.user)
+    card = Card.objects.get(account=cust.account_number)
+    card.status = 'block'
+    card.save()
+    messages.error(request,"block")
+    return redirect(f'/netbank/card_management/show_more/')
 
 
 
+@login_required
+@user_passes_test(not_superuser)
+def user_active_card(request):
+    cust = Customer.objects.get(user=request.user)
+    card = Card.objects.get(account=cust.account_number)
+    card.status = 'active'
+    card.save()
+    messages.error(request, "active")
+    return redirect(f'/netbank/card_management/show_more/')
 
+
+
+@login_required
+@user_passes_test(not_superuser)
+def user_change_atm_status(request):
+    cust = Customer.objects.get(user=request.user)
+    card = Card.objects.get(account=cust.account_number)
+    card.atm_withdrawal = not card.atm_withdrawal
+    card.save()
+    messages.error(request, "atmstatus")
+    return redirect(f'/netbank/card_management/show_more/')
+
+
+
+@login_required
+@user_passes_test(not_superuser)
+def user_change_online_status(request):
+    cust = Customer.objects.get(user=request.user)
+    card = Card.objects.get(account=cust.account_number)
+    card.online_tran = not card.online_tran
+    card.save()
+    messages.error(request, "onlinestatus")
+    return redirect(f'/netbank/card_management/show_more/')
+
+
+@login_required
+@user_passes_test(not_superuser)
+def user_view_card(request):
+    cust = Customer.objects.get(user = request.user)
+    card = Card.objects.get(account = cust.account_number)
+    card_1 = card.card_number[:4]
+    card_2 = card.card_number[4:8]
+    card_3 = card.card_number[8:12]
+    card_4 = card.card_number[12:]
+    acc = Customer.objects.get(account_number = card.account)
+    dic={'card':card,'card_1':card_1,'card_2':card_2,'card_3':card_3,'card_4':card_4,'acc':acc}
+    return render(request,'netbank/user_view_card.html',dic)
+
+
+@login_required
+@user_passes_test(not_superuser)
+def net_transactions(request):
+    transactions = []
+    print(1)
+    if request.method == 'POST' and 'filter_search' in request.POST:
+        print(2)
+        datefrom = request.POST.get('datefrom','')
+        dateto = request.POST.get('dateto','')
+        if datefrom != '' and dateto != '':
+            if dateto < datefrom:
+                messages.error(request, 'dateerror')
+            else:
+                print(3)
+                cust = Customer.objects.get(user=request.user)
+                incoming = list(Transaction.objects.filter(recipient_account=cust.account_number, date__gte = datefrom, date__lte = dateto))
+                outgoing = list(Transaction.objects.filter(account=cust.account_number, date__gte = datefrom, date__lte = dateto))
+                transactions = incoming + outgoing
+                transactions.sort(key=lambda x: x.id, reverse=True)
+                return render(request, 'netbank/transactions.html',
+                              {'transactions': transactions, 'acc': cust.account_number})
+        elif datefrom != '' and dateto == '':
+            print(4)
+            cust = Customer.objects.get(user=request.user)
+            incoming = list(
+                Transaction.objects.filter(recipient_account=cust.account_number, date__gte=datefrom))
+            outgoing = list(Transaction.objects.filter(account=cust.account_number, date__gte=datefrom))
+            transactions = incoming + outgoing
+            transactions.sort(key=lambda x: x.id, reverse=True)
+            return render(request, 'netbank/transactions.html',
+                          {'transactions': transactions, 'acc': cust.account_number})
+        elif dateto != '' and datefrom == '':
+            print(5)
+            cust = Customer.objects.get(user=request.user)
+            incoming = list(
+                Transaction.objects.filter(recipient_account=cust.account_number, date__lte=dateto))
+            outgoing = list(Transaction.objects.filter(account=cust.account_number, date__lte=dateto))
+            transactions = incoming + outgoing
+            transactions.sort(key=lambda x: x.id, reverse=True)
+            return render(request, 'netbank/transactions.html',
+                          {'transactions': transactions, 'acc': cust.account_number})
+
+
+    print(6)
+    cust = Customer.objects.get(user = request.user)
+    incoming = list(Transaction.objects.filter(recipient_account = cust.account_number))
+    outgoing = list(Transaction.objects.filter(account = cust.account_number))
+    transactions = incoming + outgoing
+    transactions.sort(key=lambda x: x.id, reverse=True)
+
+
+    return render(request, 'netbank/transactions.html' ,{'transactions':transactions, 'acc':cust.account_number})

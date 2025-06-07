@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Application - Banking Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="card_application.css">
+</head>
+
+<style>
+    :root {
+    --primary-color: #1a73e8;
+    --accent-color: #2563eb;
+    --accent-color-dark: #1d4ed8;
+    --accent-color-light: rgba(37, 99, 235, 0.1);
+    --surface-color: #ffffff;
+    --surface-color-dark: #f3f4f6;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --text-light: #9ca3af;
+    --border-color: #e5e7eb;
+    --input-bg: #f9fafb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --surface-color: #1f2937;
+        --surface-color-dark: #111827;
+        --text-primary: #f9fafb;
+        --text-secondary: #e5e7eb;
+        --text-light: #9ca3af;
+        --border-color: #374151;
+        --input-bg: #111827;
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--surface-color-dark);
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.card-application-container {
+    background: var(--surface-color);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+}
+
+.section-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.card-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.card-option {
+    transition: transform 0.3s ease;
+}
+
+.card-option:hover {
+    transform: translateY(-5px);
+}
+
+.card-preview {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+}
+
+.card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    backdrop-filter: blur(4px);
+}
+
+.card-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.chip-icon {
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(135deg, #ffd700, #ffa500);
+    border-radius: 4px;
+}
+
+.card-type {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.card-features {
+    flex-grow: 1;
+    margin: 1.5rem 0;
+}
+
+.card-features ul {
+    list-style: none;
+}
+
+.card-features li {
+    margin: 0.75rem 0;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.card-features li::before {
+    content: "✓";
+    margin-right: 0.5rem;
+    color: #4ade80;
+}
+
+.apply-button {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.apply-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Application Form Styles */
+.application-form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--surface-color);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+}
+
+.application-form h3 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px var(--accent-color-light);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.back-button,
+.submit-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-button {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.submit-button {
+    background: var(--accent-color);
+    border: none;
+    color: white;
+}
+
+.back-button:hover {
+    background: var(--surface-color-dark);
+}
+
+.submit-button:hover {
+    background: var(--accent-color-dark);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .card-options {
+        grid-template-columns: 1fr;
+    }
+
+    .card-preview {
+        min-height: 250px;
+    }
+
+    .application-form {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .back-button,
+    .submit-button {
+        width: 100%;
+    }
+}
+
+
+</style>
+<body>
+    <div class="container">
+        <div class="card-application-container">
+            <h2 class="section-title">Choose Your Card</h2>
+            <div class="card-options">
+                <!-- Debit Card Option -->
+                <div class="card-option">
+                    <div class="card-preview">
+                        <div class="card-badge">Standard</div>
+                        <div class="card-content">
+                            <div class="card-chip">
+                                <div class="chip-icon"></div>
+                                <span class="card-type">Debit</span>
+                            </div>
+                            <div class="card-features">
+                                <ul>
+                                    <li>No annual fee</li>
+                                    <li>Worldwide ATM access</li>
+                                    <li>Contactless payments</li>
+                                    <li>Online banking access</li>
+                                </ul>
+                            </div>
+                            <button class="apply-button" data-card-type="debit">Apply Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Credit Card Option -->
+                <div class="card-option">
+                    <div class="card-preview" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <div class="card-badge">Gold</div>
+                        <div class="card-content">
+                            <div class="card-chip">
+                                <div class="chip-icon"></div>
+                                <span class="card-type">Credit</span>
+                            </div>
+                            <div class="card-features">
+                                <ul>
+                                    <li>1.5% cashback on all purchases</li>
+                                    <li>Travel insurance included</li>
+                                    <li>Extended warranty protection</li>
+                                    <li>24/7 concierge service</li>
+                                </ul>
+                            </div>
+                            <button class="apply-button" data-card-type="credit">Apply Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium Card Option -->
+                <div class="card-option">
+                    <div class="card-preview" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
+                        <div class="card-badge">Premium</div>
+                        <div class="card-content">
+                            <div class="card-chip">
+                                <div class="chip-icon"></div>
+                                <span class="card-type">Platinum</span>
+                            </div>
+                            <div class="card-features">
+                                <ul>
+                                    <li>3% cashback on all purchases</li>
+                                    <li>Priority airport lounge access</li>
+                                    <li>Premium travel insurance</li>
+                                    <li>Exclusive lifestyle benefits</li>
+                                </ul>
+                            </div>
+                            <button class="apply-button" data-card-type="premium">Apply Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Form (Initially Hidden) -->
+            <div class="application-form" style="display: none;">
+                <h3>Card Application</h3>
+                <form id="cardApplicationForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="income">Annual Income</label>
+                        <input type="number" id="income" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employment">Employment Status</label>
+                        <select id="employment" required>
+                            <option value="">Select Status</option>
+                            <option value="employed">Employed</option>
+                            <option value="self-employed">Self-Employed</option>
+                            <option value="student">Student</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="back-button">Back to Cards</button>
+                        <button type="submit" class="submit-button">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const cardOptions = document.querySelector('.card-options');
+    const applicationForm = document.querySelector('.application-form');
+    const cardApplicationForm = document.getElementById('cardApplicationForm');
+    const backButton = document.querySelector('.back-button');
+    let selectedCardType = '';
+
+    // Handle Apply Now button clicks
+    const applyButtons = document.querySelectorAll('.apply-button');
+    applyButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            selectedCardType = e.target.dataset.cardType;
+            // Show the application form
+            cardOptions.style.display = 'none';
+            applicationForm.style.display = 'block';
+            // Update form title with selected card type
+            const formTitle = applicationForm.querySelector('h3');
+            formTitle.textContent = `${selectedCardType.charAt(0).toUpperCase() + selectedCardType.slice(1)} Card Application`;
+        });
+    });
+
+    // Handle Back button click
+    backButton.addEventListener('click', () => {
+        // Show the card options
+        cardOptions.style.display = 'grid';
+        applicationForm.style.display = 'none';
+        // Reset the form
+        cardApplicationForm.reset();
+    });
+
+    // Handle form submission
+    cardApplicationForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get form data
+        const formData = {
+            cardType: selectedCardType,
+            fullName: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            income: document.getElementById('income').value,
+            employment: document.getElementById('employment').value
+        };
+
+        try {
+            // Show loading state
+            const submitButton = document.querySelector('.submit-button');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Processing...';
+            submitButton.disabled = true;
+
+            // Simulate API call (replace with actual API endpoint)
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Show success message
+            alert('Application submitted successfully! We will review your application and contact you soon.');
+
+            // Reset form and go back to card selection
+            cardApplicationForm.reset();
+            cardOptions.style.display = 'grid';
+            applicationForm.style.display = 'none';
+
+            // Reset button state
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+
+        } catch (error) {
+            console.error('Error submitting application:', error);
+            alert('There was an error submitting your application. Please try again.');
+        }
+    });
+
+    // Form validation
+    const inputs = cardApplicationForm.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('input', () => {
+            validateInput(input);
+        });
+
+        input.addEventListener('blur', () => {
+            validateInput(input);
+        });
+    });
+
+    function validateInput(input) {
+        const isValid = input.checkValidity();
+        input.style.borderColor = isValid ? 'var(--border-color)' : '#ef4444';
+
+        // Show validation message
+        let errorMessage = input.nextElementSibling;
+        if (!isValid) {
+            if (!errorMessage || !errorMessage.classList.contains('error-message')) {
+                errorMessage = document.createElement('div');
+                errorMessage.className = 'error-message';
+                errorMessage.style.color = '#ef4444';
+                errorMessage.style.fontSize = '0.875rem';
+                errorMessage.style.marginTop = '0.25rem';
+                input.parentNode.appendChild(errorMessage);
+            }
+            errorMessage.textContent = input.validationMessage;
+        } else if (errorMessage && errorMessage.classList.contains('error-message')) {
+            errorMessage.remove();
+        }
+    }
+
+    // Phone number formatting
+    const phoneInput = document.getElementById('phone');
+    phoneInput.addEventListener('input', (e) => {
+        // Remove all non-numeric characters
+        let phone = e.target.value.replace(/\D/g, '');
+
+        // Format the number
+        if (phone.length > 0) {
+            if (phone.length <= 3) {
+                phone = phone;
+            } else if (phone.length <= 6) {
+                phone = `${phone.slice(0, 3)}-${phone.slice(3)}`;
+            } else {
+                phone = `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6, 10)}`;
+            }
+        }
+
+        // Update the input value
+        e.target.value = phone;
+    });
+
+    // Income formatting
+    const incomeInput = document.getElementById('income');
+    incomeInput.addEventListener('input', (e) => {
+        // Remove all non-numeric characters
+        let income = e.target.value.replace(/\D/g, '');
+
+        // Format the number with commas
+        income = new Intl.NumberFormat().format(income);
+
+        // Update the input value
+        e.target.value = income;
+    });
+});
+
+    </script>
+</body>
+</html>
