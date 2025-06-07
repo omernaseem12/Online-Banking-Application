@@ -1013,6 +1013,28 @@
 {% endblock %}
 
 {% block body %}
+
+
+{%if messages %}
+<script>
+    {% for msg in messages %}
+    {% if msg.message == 'already' %}
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "You Already Have A Card, Contact Bank",
+    });
+    {% elif msg.message == 'applied' %}
+    Swal.fire({
+      icon: "success",
+      title: "Card Applied",
+      text: "you now have a pending request in the waiting list.",
+    });
+    {% endif %}
+    {% endfor %}
+</script>
+{%endif%}
+
 <div class="dashboard-sections">
     <!-- Card Management Section -->
     <div class="section-card">
@@ -1061,6 +1083,8 @@
                     <span class="material-icons" style="color:red;">lock</span>
                     <span style="" >Block card</span>
                 </a>
+                {% elif card.status == 'pending' %}
+
                 {% else %}
                 <a href="card_management/show_more/active/" style="text-decoration: none;" class="card-action-btn">
                     <span class="material-icons" style="color:green;">lock_open</span>
@@ -1157,11 +1181,11 @@
                 </div>
             </div>
                 <div class="card-actions">
-                <a href="#" style="text-decoration: none;" class="card-action-btn">
+                <a href="apply_card/" style="text-decoration: none;" class="card-action-btn">
                     <span class="material-icons">done</span>
                     <span style="font-size:18px;">Apply Now</span>
                 </a>
-                <a href="#" style="text-decoration: none;" class="card-action-btn">
+                <a href="apply_card/" style="text-decoration: none;" class="card-action-btn">
                     <span class="material-icons">support_agent</span>
                     <span>Support</span>
                 </a>
@@ -1268,7 +1292,7 @@
         <span class="material-icons">credit_card</span>
         <span>Card Management</span>
     </a>
-    <a href="#" style="text-decoration: none;" class="quick-action-btn" >
+    <a href="profile/" style="text-decoration: none;" class="quick-action-btn" >
         <span class="material-icons">person</span>
         <span>User Info</span>
     </a>
@@ -1292,11 +1316,11 @@
                 <div class="transaction-info">
                     {% if trans.account == acc %}
                     <div class="stat-icon red">
-                            <span class="material-icons">arrow_downward</span>
+                            <span class="material-icons">arrow_upward</span>
                         </div>
                     {% else %}
                     <div class="stat-icon green">
-                            <span class="material-icons">arrow_upward</span>
+                            <span class="material-icons">arrow_downward</span>
                         </div>
 
                     {% endif %}

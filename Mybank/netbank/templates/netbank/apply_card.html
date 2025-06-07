@@ -1,541 +1,334 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Application - Banking Dashboard</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="card_application.css">
-</head>
+{% extends 'netbank/basic.html' %}
 
-<style>
-    :root {
-    --primary-color: #1a73e8;
-    --accent-color: #2563eb;
-    --accent-color-dark: #1d4ed8;
-    --accent-color-light: rgba(37, 99, 235, 0.1);
-    --surface-color: #ffffff;
-    --surface-color-dark: #f3f4f6;
-    --text-primary: #1f2937;
-    --text-secondary: #4b5563;
-    --text-light: #9ca3af;
-    --border-color: #e5e7eb;
-    --input-bg: #f9fafb;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
+{% block title %}Apply for a Card - NetBank{% endblock %}
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --surface-color: #1f2937;
-        --surface-color-dark: #111827;
-        --text-primary: #f9fafb;
-        --text-secondary: #e5e7eb;
-        --text-light: #9ca3af;
-        --border-color: #374151;
-        --input-bg: #111827;
-    }
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background-color: var(--surface-color-dark);
-    color: var(--text-primary);
-    line-height: 1.5;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.card-application-container {
-    background: var(--surface-color);
-    border-radius: 1rem;
-    box-shadow: var(--shadow-md);
-    padding: 2rem;
-}
-
-.section-title {
-    font-size: 1.875rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    text-align: center;
-    margin-bottom: 2.5rem;
-}
-
-.card-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.card-option {
-    transition: transform 0.3s ease;
-}
-
-.card-option:hover {
-    transform: translateY(-5px);
-}
-
-.card-preview {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    color: white;
-    position: relative;
-    overflow: hidden;
-    min-height: 300px;
-}
-
-.card-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    backdrop-filter: blur(4px);
-}
-
-.card-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-chip {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.chip-icon {
-    width: 40px;
-    height: 30px;
-    background: linear-gradient(135deg, #ffd700, #ffa500);
-    border-radius: 4px;
-}
-
-.card-type {
-    font-size: 1.25rem;
-    font-weight: 600;
-}
-
-.card-features {
-    flex-grow: 1;
-    margin: 1.5rem 0;
-}
-
-.card-features ul {
-    list-style: none;
-}
-
-.card-features li {
-    margin: 0.75rem 0;
-    display: flex;
-    align-items: center;
-    font-size: 0.875rem;
-}
-
-.card-features li::before {
-    content: "✓";
-    margin-right: 0.5rem;
-    color: #4ade80;
-}
-
-.apply-button {
-    width: 100%;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: white;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(4px);
-}
-
-.apply-button:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-/* Application Form Styles */
-.application-form {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: var(--surface-color);
-    border-radius: 1rem;
-    box-shadow: var(--shadow-md);
-}
-
-.application-form h3 {
-    font-size: 1.5rem;
-    color: var(--text-primary);
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-    font-weight: 500;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    background: var(--input-bg);
-    color: var(--text-primary);
-    font-size: 1rem;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 2px var(--accent-color-light);
-}
-
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
-}
-
-.back-button,
-.submit-button {
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.back-button {
-    background: var(--surface-color);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-}
-
-.submit-button {
-    background: var(--accent-color);
-    border: none;
-    color: white;
-}
-
-.back-button:hover {
-    background: var(--surface-color-dark);
-}
-
-.submit-button:hover {
-    background: var(--accent-color-dark);
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .container {
-        padding: 1rem;
+{% block style%}
+    .card-application-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
     }
 
-    .card-options {
-        grid-template-columns: 1fr;
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        color: var(--text-color);
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+    }
+
+    .card-types-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .card-type {
+        background: var(--card-background);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .card-type:hover {
+        transform: translateY(-5px);
     }
 
     .card-preview {
-        min-height: 250px;
+        height: 200px;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        color: white;
+        background: linear-gradient(45deg, #1a1a1a, #4a4a4a);
     }
 
-    .application-form {
-        margin: 1rem;
-        padding: 1.5rem;
+    .card-preview.classic {
+        background: linear-gradient(45deg, #1e3a8a, #3b82f6);
     }
 
-    .form-actions {
-        flex-direction: column;
+    .card-preview.gold {
+        background: linear-gradient(45deg, #b8860b, #daa520);
     }
 
-    .back-button,
-    .submit-button {
+    .card-preview.platinum {
+        background: linear-gradient(45deg, #1a1a1a, #4a4a4a);
+    }
+
+    .card-chip {
+        width: 50px;
+        height: 40px;
+        background: #ffd700;
+        border-radius: 5px;
+        margin-bottom: 30px;
+    }
+
+    .card-network {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .card-number {
+        font-size: 1.4rem;
+        letter-spacing: 4px;
+        margin-bottom: 20px;
+    }
+
+    .card-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .card-details h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: var(--text-color);
+    }
+
+    .card-features {
+        margin-bottom: 20px;
+    }
+
+    .feature {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .feature .material-icons {
+        color: #10b981;
+    }
+
+    .card-limits {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+    }
+
+    .card-limits p {
+        margin-bottom: 5px;
+    }
+
+    .apply-btn {
         width: 100%;
+        padding: 12px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
-}
+
+    .apply-btn:hover {
+        background: var(--secondary-color);
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        position: relative;
+        background: var(--card-background);
+        margin: 5% auto;
+        padding: 30px;
+        width: 90%;
+        max-width: 600px;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #64748b;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-color);
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .card-types-container {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-content {
+            margin: 10% auto;
+            width: 95%;
+        }
+    }
+{% endblock %}
 
 
-</style>
-<body>
-    <div class="container">
-        <div class="card-application-container">
-            <h2 class="section-title">Choose Your Card</h2>
-            <div class="card-options">
-                <!-- Debit Card Option -->
-                <div class="card-option">
-                    <div class="card-preview">
-                        <div class="card-badge">Standard</div>
-                        <div class="card-content">
-                            <div class="card-chip">
-                                <div class="chip-icon"></div>
-                                <span class="card-type">Debit</span>
-                            </div>
-                            <div class="card-features">
-                                <ul>
-                                    <li>No annual fee</li>
-                                    <li>Worldwide ATM access</li>
-                                    <li>Contactless payments</li>
-                                    <li>Online banking access</li>
-                                </ul>
-                            </div>
-                            <button class="apply-button" data-card-type="debit">Apply Now</button>
-                        </div>
-                    </div>
-                </div>
+{% block body %}
+<form method="POST">
+    {% csrf_token %}
+    <div class="card-application-container">
+    <div class="page-header">
+        <h1>Choose Your Card</h1>
+        <p>Select the card that best fits your lifestyle and financial needs</p>
+    </div>
 
-                <!-- Credit Card Option -->
-                <div class="card-option">
-                    <div class="card-preview" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                        <div class="card-badge">Gold</div>
-                        <div class="card-content">
-                            <div class="card-chip">
-                                <div class="chip-icon"></div>
-                                <span class="card-type">Credit</span>
-                            </div>
-                            <div class="card-features">
-                                <ul>
-                                    <li>1.5% cashback on all purchases</li>
-                                    <li>Travel insurance included</li>
-                                    <li>Extended warranty protection</li>
-                                    <li>24/7 concierge service</li>
-                                </ul>
-                            </div>
-                            <button class="apply-button" data-card-type="credit">Apply Now</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Premium Card Option -->
-                <div class="card-option">
-                    <div class="card-preview" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
-                        <div class="card-badge">Premium</div>
-                        <div class="card-content">
-                            <div class="card-chip">
-                                <div class="chip-icon"></div>
-                                <span class="card-type">Platinum</span>
-                            </div>
-                            <div class="card-features">
-                                <ul>
-                                    <li>3% cashback on all purchases</li>
-                                    <li>Priority airport lounge access</li>
-                                    <li>Premium travel insurance</li>
-                                    <li>Exclusive lifestyle benefits</li>
-                                </ul>
-                            </div>
-                            <button class="apply-button" data-card-type="premium">Apply Now</button>
-                        </div>
-                    </div>
-                </div>
+    <div class="card-types-container">
+        <!-- Classic Card -->
+        <div class="card-type">
+            <div class="card-preview classic">
+                <div class="card-chip"></div>
+                <div class="card-network">NETBANK</div>
+                <div class="card-number">•••• •••• •••• ••••</div>
+                <div class="card-name">CLASSIC CARD</div>
             </div>
+            <div class="card-details">
+                <h2>Classic Card</h2>
+                <div class="card-features">
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>No annual fee</p>
+                    </div>
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>2% cashback on groceries</p>
+                    </div>
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>Basic travel insurance</p>
+                    </div>
+                </div>
+                <div class="card-limits">
+                    <p class="limit"><strong>Credit Limit:</strong> Up to $2,000</p>
+                    <p class="rate"><strong>Interest Rate:</strong> 19.99% APR</p>
+                </div>
+            <button name="classic" class="apply-btn" onclick="return confirm('Are you sure you want to proceed?');" >Apply Now</button>
+            </div>
+        </div>
 
-            <!-- Application Form (Initially Hidden) -->
-            <div class="application-form" style="display: none;">
-                <h3>Card Application</h3>
-                <form id="cardApplicationForm">
-                    <div class="form-group">
-                        <label for="fullName">Full Name</label>
-                        <input type="text" id="fullName" required>
+        <!-- Gold Card -->
+        <div class="card-type">
+            <div class="card-preview gold">
+                <div class="card-chip"></div>
+                <div class="card-network">NETBANK</div>
+                <div class="card-number">•••• •••• •••• ••••</div>
+                <div class="card-name">GOLD CARD</div>
+            </div>
+            <div class="card-details">
+                <h2>Gold Card</h2>
+                <div class="card-features">
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>3% cashback on dining</p>
                     </div>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" required>
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>Comprehensive travel insurance</p>
                     </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" required>
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>Airport lounge access (2/year)</p>
                     </div>
-                    <div class="form-group">
-                        <label for="income">Annual Income</label>
-                        <input type="number" id="income" required>
+                </div>
+                <div class="card-limits">
+                    <p class="limit"><strong>Credit Limit:</strong> Up to $5,000</p>
+                    <p class="rate"><strong>Interest Rate:</strong> 17.99% APR</p>
+                </div>
+                <button name="gold" class="apply-btn" onclick="return confirm('Are you sure you want to proceed?');" >Apply Now</button>
+            </div>
+        </div>
+
+        <!-- Platinum Card -->
+        <div class="card-type">
+            <div class="card-preview platinum">
+                <div class="card-chip"></div>
+                <div class="card-network">NETBANK</div>
+                <div class="card-number">•••• •••• •••• ••••</div>
+                <div class="card-name">PLATINUM CARD</div>
+            </div>
+            <div class="card-details">
+                <h2>Platinum Card</h2>
+                <div class="card-features">
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>5% cashback on travel</p>
                     </div>
-                    <div class="form-group">
-                        <label for="employment">Employment Status</label>
-                        <select id="employment" required>
-                            <option value="">Select Status</option>
-                            <option value="employed">Employed</option>
-                            <option value="self-employed">Self-Employed</option>
-                            <option value="student">Student</option>
-                            <option value="other">Other</option>
-                        </select>
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>Premium travel insurance</p>
                     </div>
-                    <div class="form-actions">
-                        <button type="button" class="back-button">Back to Cards</button>
-                        <button type="submit" class="submit-button">Submit Application</button>
+                    <div class="feature">
+                        <span class="material-icons">check_circle</span>
+                        <p>Unlimited airport lounge access</p>
                     </div>
-                </form>
+                </div>
+                <div class="card-limits">
+                    <p class="limit"><strong>Credit Limit:</strong> Up to $10,000</p>
+                    <p class="rate"><strong>Interest Rate:</strong> 15.99% APR</p>
+                </div>
+                <button name="platinum" class="apply-btn" onclick="return confirm('Are you sure you want to proceed?');" >Apply Now</button>
             </div>
         </div>
     </div>
-    <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const cardOptions = document.querySelector('.card-options');
-    const applicationForm = document.querySelector('.application-form');
-    const cardApplicationForm = document.getElementById('cardApplicationForm');
-    const backButton = document.querySelector('.back-button');
-    let selectedCardType = '';
 
-    // Handle Apply Now button clicks
-    const applyButtons = document.querySelectorAll('.apply-button');
-    applyButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            selectedCardType = e.target.dataset.cardType;
-            // Show the application form
-            cardOptions.style.display = 'none';
-            applicationForm.style.display = 'block';
-            // Update form title with selected card type
-            const formTitle = applicationForm.querySelector('h3');
-            formTitle.textContent = `${selectedCardType.charAt(0).toUpperCase() + selectedCardType.slice(1)} Card Application`;
-        });
-    });
+</div>
 
-    // Handle Back button click
-    backButton.addEventListener('click', () => {
-        // Show the card options
-        cardOptions.style.display = 'grid';
-        applicationForm.style.display = 'none';
-        // Reset the form
-        cardApplicationForm.reset();
-    });
+</form>
 
-    // Handle form submission
-    cardApplicationForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
 
-        // Get form data
-        const formData = {
-            cardType: selectedCardType,
-            fullName: document.getElementById('fullName').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            income: document.getElementById('income').value,
-            employment: document.getElementById('employment').value
-        };
 
-        try {
-            // Show loading state
-            const submitButton = document.querySelector('.submit-button');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Processing...';
-            submitButton.disabled = true;
 
-            // Simulate API call (replace with actual API endpoint)
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // Show success message
-            alert('Application submitted successfully! We will review your application and contact you soon.');
-
-            // Reset form and go back to card selection
-            cardApplicationForm.reset();
-            cardOptions.style.display = 'grid';
-            applicationForm.style.display = 'none';
-
-            // Reset button state
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-
-        } catch (error) {
-            console.error('Error submitting application:', error);
-            alert('There was an error submitting your application. Please try again.');
-        }
-    });
-
-    // Form validation
-    const inputs = cardApplicationForm.querySelectorAll('input, select');
-    inputs.forEach(input => {
-        input.addEventListener('input', () => {
-            validateInput(input);
-        });
-
-        input.addEventListener('blur', () => {
-            validateInput(input);
-        });
-    });
-
-    function validateInput(input) {
-        const isValid = input.checkValidity();
-        input.style.borderColor = isValid ? 'var(--border-color)' : '#ef4444';
-
-        // Show validation message
-        let errorMessage = input.nextElementSibling;
-        if (!isValid) {
-            if (!errorMessage || !errorMessage.classList.contains('error-message')) {
-                errorMessage = document.createElement('div');
-                errorMessage.className = 'error-message';
-                errorMessage.style.color = '#ef4444';
-                errorMessage.style.fontSize = '0.875rem';
-                errorMessage.style.marginTop = '0.25rem';
-                input.parentNode.appendChild(errorMessage);
-            }
-            errorMessage.textContent = input.validationMessage;
-        } else if (errorMessage && errorMessage.classList.contains('error-message')) {
-            errorMessage.remove();
-        }
-    }
-
-    // Phone number formatting
-    const phoneInput = document.getElementById('phone');
-    phoneInput.addEventListener('input', (e) => {
-        // Remove all non-numeric characters
-        let phone = e.target.value.replace(/\D/g, '');
-
-        // Format the number
-        if (phone.length > 0) {
-            if (phone.length <= 3) {
-                phone = phone;
-            } else if (phone.length <= 6) {
-                phone = `${phone.slice(0, 3)}-${phone.slice(3)}`;
-            } else {
-                phone = `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6, 10)}`;
-            }
-        }
-
-        // Update the input value
-        e.target.value = phone;
-    });
-
-    // Income formatting
-    const incomeInput = document.getElementById('income');
-    incomeInput.addEventListener('input', (e) => {
-        // Remove all non-numeric characters
-        let income = e.target.value.replace(/\D/g, '');
-
-        // Format the number with commas
-        income = new Intl.NumberFormat().format(income);
-
-        // Update the input value
-        e.target.value = income;
-    });
-});
-
-    </script>
-</body>
-</html>
+{% endblock %}

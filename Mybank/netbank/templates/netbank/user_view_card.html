@@ -617,6 +617,11 @@ h2 {
         </div>
       </div>
 
+
+
+
+      {% if card.status != 'pending' %}
+
       <div class="button-grid">
         {% if card.status == 'active' %}
         <a href="/netbank/card_management/show_more/block/" class="modern-button-red">Block Card</a>
@@ -634,9 +639,11 @@ h2 {
         {% else %}
         <a href="/netbank/card_management/show_more/change_online_status/" class="modern-button-green">Open Online Transactions</a>
         {% endif %}
-
-
       </div>
+      {% else %}
+       <h1>Card request submitted.<br> You are now on the pending list.</h1>
+      {% endif %}
+
     </div>
 
     <div class="right-section">
@@ -713,7 +720,6 @@ h2 {
           </div>
         </div>
       </div>
-
 
     </div>
   </div>

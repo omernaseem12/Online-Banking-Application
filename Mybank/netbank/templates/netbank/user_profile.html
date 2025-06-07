@@ -1,0 +1,215 @@
+{% extends 'netbank/basic.html' %}
+
+{% block title %}User Profile - NetBank{% endblock %}
+
+{% block body %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>User Profile</h1>
+        <p class="last-login">Last login: {{ user.last_login|date:"F d, Y H:i" }}</p>
+    </div>
+
+    <div class="profile-grid">
+        <!-- Personal Information Card -->
+        <div class="profile-card">
+            <div class="card-header">
+                <span class="material-icons">person</span>
+                <h2>Personal Information</h2>
+            </div>
+            <div class="card-content">
+                <div class="info-row">
+                    <label>Full Name</label>
+                    <p>{{ customer.first_name }} {{ customer.last_name }}</p>
+                </div>
+                <div class="info-row">
+                    <label>Email</label>
+                    <p>{{ user.email }}</p>
+                </div>
+                <div class="info-row">
+                    <label>Phone</label>
+                    <p>{{ customer.phone_number }}</p>
+                </div>
+                <div class="info-row">
+                    <label>Address</label>
+                    <p>{{ customer.address }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Information Card -->
+        <div class="profile-card">
+            <div class="card-header">
+                <span class="material-icons">account_balance</span>
+                <h2>Account Information</h2>
+            </div>
+            <div class="card-content">
+                <div class="info-row">
+                    <label>Account Number</label>
+                    <p>{{ customer.account_number }}</p>
+                </div>
+                <div class="info-row">
+                    <label>Account Type</label>
+                    <p>{{ customer.account_type|title}} Account</p>
+                </div>
+                <div class="info-row">
+                    <label>Account Status</label>
+                    <p class="status-badge {% if customer.status == 'Active' %}status-active{% else %}status-inactive{% endif %}">
+                        {{ customer.status }}
+                    </p>
+                </div>
+                <div class="info-row">
+                    <label>Current Balance</label>
+                    <p class="balance">${{ customer.balance }}</p>
+                </div>
+            </div>
+        </div>
+
+            {% if is_card %}
+        <!-- Card Information -->
+        <div class="profile-card">
+            <div class="card-header">
+                <span class="material-icons">credit_card</span>
+                <h2>Card Information</h2>
+            </div>
+            <div class="card-content">
+                <div class="info-row">
+                    <label>Card Number</label>
+                    <p>{{ card.card_number}}</p>
+                </div>
+                <div class="info-row">
+                    <label>Card Status</label>
+                    <p class="status-badge {% if card.status == 'active' %}status-active{%elif card.status == 'active' %}status-pending {% else %}status-inactive{% endif %}">
+                        {{ card.status|title }}
+                    </p>
+                </div>
+                <div class="info-row">
+                    <label>ATM Withdrawal</label>
+                    <p>{{ card.atm_withdrawal|yesno:"Enabled,Disabled" }}</p>
+                </div>
+                <div class="info-row">
+                    <label>Online Transactions</label>
+                    <p>{{ card.online_tran|yesno:"Enabled,Disabled" }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .profile-header {
+        margin-bottom: 30px;
+    }
+
+    .profile-header h1 {
+        font-size: 2rem;
+        color: var(--text-color);
+        margin-bottom: 10px;
+    }
+
+    .last-login {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+    }
+
+    .profile-card {
+        background: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 20px;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-header h2 {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    .card-content {
+        padding: 20px;
+    }
+
+    .info-row {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .info-row:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .info-row label {
+        display: block;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+
+    .info-row p {
+        margin: 0;
+        font-size: 1.1rem;
+        color: var(--text-color);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .status-active {
+        background-color: #10b981;
+        color: white;
+    }
+
+    .status-inactive {
+        background-color: #ef4444;
+        color: white;
+    }
+        .status-pending {
+        background-color: orange;
+        color: white;
+    }
+
+    .balance {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    @media (max-width: 768px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-container {
+            padding: 10px;
+        }
+    }
+
+</style>
+{% endblock %} 

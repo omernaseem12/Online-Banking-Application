@@ -26,6 +26,12 @@ def generate_unique_trans_id():
         if not Transaction.objects.filter(trans_id=trans).exists():
             return trans
 
+def generate_unique_card_number():
+    while True:
+        number = str(random.randint(10_000_000_000_000_00, 99_999_999_999_999_99))  # 8-digit number
+        card_number = number
+        if not Card.objects.filter(card_number=card_number).exists():
+            return card_number
 
 
 @login_required
@@ -33,8 +39,12 @@ def generate_unique_trans_id():
 def net_dashboard(request):
     print(request.user)
     now_user = Customer.objects.get(user = request.user)
-    card = Card.objects.get(account = now_user.account_number)
-
+    try:
+        card = Card.objects.get(account = now_user.account_number)
+        cardslen = 1
+    except:
+        card=[]
+        cardslen = 0
     month_expenses = 0
     month_income = 0
     incoming = Transaction.objects.filter(recipient_account = now_user.account_number)
@@ -66,7 +76,7 @@ def net_dashboard(request):
 
 
     print('this is the customer', now_user.account_number)
-    return render(request,'netbank/dashboard.html',{'acc':acc,'user':now_user, 'month_exp':month_expenses,
+    return render(request,'netbank/dashboard.html',{'cardslen':cardslen,'acc':acc,'user':now_user, 'month_exp':month_expenses,
                                                     'month_inc':month_income, 'card':card,'transactions':transactions})
 
 
@@ -121,7 +131,7 @@ def net_transfer(request):
                 cust.save()
                 rec_user.balance = float(rec_user.balance) + float(amount)
                 rec_user.save()
-                return redirect('trans_detail',trans_id = trans_id)
+                return redirect('net_trans_detail',trans_id = trans_id)
             else:
                 messages.error(request,'blocked')
                 return render(request, 'netbank/transfer.html', {"cust": cust})
@@ -207,15 +217,17 @@ def user_change_online_status(request):
 @user_passes_test(not_superuser)
 def user_view_card(request):
     cust = Customer.objects.get(user = request.user)
-    card = Card.objects.get(account = cust.account_number)
-    card_1 = card.card_number[:4]
-    card_2 = card.card_number[4:8]
-    card_3 = card.card_number[8:12]
-    card_4 = card.card_number[12:]
-    acc = Customer.objects.get(account_number = card.account)
-    dic={'card':card,'card_1':card_1,'card_2':card_2,'card_3':card_3,'card_4':card_4,'acc':acc}
-    return render(request,'netbank/user_view_card.html',dic)
-
+    try:
+        card = Card.objects.get(account = cust.account_number)
+        card_1 = card.card_number[:4]
+        card_2 = card.card_number[4:8]
+        card_3 = card.card_number[8:12]
+        card_4 = card.card_number[12:]
+        acc = Customer.objects.get(account_number = card.account)
+        dic={'card':card,'card_1':card_1,'card_2':card_2,'card_3':card_3,'card_4':card_4,'acc':acc}
+        return render(request,'netbank/user_view_card.html',dic)
+    except:
+        return render(request, 'netbank/apply_card.html')
 
 @login_required
 @user_passes_test(not_superuser)
@@ -269,3 +281,66 @@ def net_transactions(request):
 
 
     return render(request, 'netbank/transactions.html' ,{'transactions':transactions, 'acc':cust.account_number})
+
+
+@login_required
+@user_passes_test(not_superuser)
+def user_profile(request):
+    cust = Customer.objects.get(user=request.user)
+    try:
+        card = Card.objects.get(account=cust.account_number)
+        is_card = True
+    except:
+        card = []
+        is_card = False
+
+    context = {
+        'customer': cust,
+        'card': card,
+        'user': request.user,
+        'is_card':is_card
+
+    }
+    return render(request, 'netbank/user_profile.html', context)
+
+
+@login_required
+@user_passes_test(not_superuser)
+def apply_card(request):
+    cust = Customer.objects.get(user=request.user)
+
+    if request.method == 'POST' and 'classic' in request.POST:
+        if apply_card_fun(request,'classic'):
+            messages.error(request,'applied')
+            return redirect('net_dashboard')
+        else:
+            return render(request, 'netbank/apply_card.html')
+    elif request.method == 'POST' and 'gold' in request.POST:
+        if apply_card_fun(request, 'gold'):
+            messages.error(request, 'applied')
+            return redirect('net_dashboard')
+        else:
+            return render(request, 'netbank/apply_card.html')
+    elif request.method == 'POST' and 'platinum' in request.POST:
+        if apply_card_fun(request, 'platinum'):
+            messages.error(request, 'applied')
+            return redirect('net_dashboard')
+        else:
+            return render(request, 'netbank/apply_card.html')
+
+
+
+
+    if Card.objects.filter(cnic=cust.cnic).exists():
+        messages.error(request,'already')
+        return redirect('net_dashboard')
+    else:
+        return render(request,'netbank/apply_card.html')
+
+
+@login_required
+@user_passes_test(not_superuser)
+def apply_card_fun(request,selectedType):
+    cust = Customer.objects.get(user=request.user)
+    Card.objects.create(account = cust.account_number,cnic = cust.cnic,card_number = generate_unique_card_number(), card_type = selectedType)
+    return True
