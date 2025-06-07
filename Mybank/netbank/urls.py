@@ -17,6 +17,7 @@ urlpatterns = [
     path('card_management/show_more/change_online_status/', views.user_change_online_status,name='user_change_online_status'),
     path('profile/', views.user_profile, name='user_profile'),
     path('apply_card/', views.apply_card, name='apply_card'),
+    path('change_password/', views.change_pass, name='change_password'),
 
 
 ]

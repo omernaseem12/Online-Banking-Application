@@ -344,3 +344,48 @@ def apply_card_fun(request,selectedType):
     cust = Customer.objects.get(user=request.user)
     Card.objects.create(account = cust.account_number,cnic = cust.cnic,card_number = generate_unique_card_number(), card_type = selectedType)
     return True
+
+
+def change_pass(request):
+
+    if request.method == 'POST':
+        current_pass = request.POST.get('current_password')
+        new_pass = request.POST.get('new_password')
+        confirm_pass = request.POST.get('confirm_password')
+        if request.user.check_password(current_pass):
+            if new_pass == confirm_pass:
+                request.user.set_password(new_pass)
+                request.user.save()
+                messages.error(request, 'passchange')
+                return redirect('change_password')
+            else:
+                messages.error(request, 'notequal')
+                return redirect('change_password')
+        else:
+            messages.error(request,'wrongpass')
+            return redirect('change_password')
+
+
+    return render(request,'netbank/change_password.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
